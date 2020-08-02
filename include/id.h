@@ -4,11 +4,11 @@
 #ifndef ID_H
 #define ID_H
 
-#include <atrribute.h>
+#include "attribute.h"
 
 namespace idogaf
 {
-class Id : public Atrribute
+class Id : public Attribute
 {
     public:
         /** Default constructor */
@@ -16,12 +16,19 @@ class Id : public Atrribute
         /** Default destructor */
         virtual ~Id();
         /** Copy constructor
-         *  \param other Object to copy from
+            @param other Object to copy from.
          */
         Id(const Id& other);
+        /** Attribute-based constructor
+
+            Copies values from the attribute.
+
+            @param attribute Attribute to copy values from.
+        */
+        Id(const Attribute& attribute);
         /** Assignment operator
-         *  \param other Object to assign from
-         *  \return A reference to this
+            @param other Object to assign from.
+            @return A reference to this.
          */
         Id& operator=(const Id& other);
 

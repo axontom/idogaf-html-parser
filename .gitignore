@@ -32,4 +32,5 @@
 *.app
 
 # Codeblocks
-.cbp
+*.cbp
+*.layout

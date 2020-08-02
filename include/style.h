@@ -10,12 +10,12 @@
 namespace idogaf
 {
 
-/** Name-Value pair structure for storing css classes
+/** Name-Value pair structure for storing css styles
 */
 struct DStringPair
 {
-    std::string name;
-    std::string value;
+    std::string name = "";
+    std::string value = "";
 };
 
 class Style : public Attribute
@@ -29,6 +29,13 @@ class Style : public Attribute
             @param other Object to copy from
          */
         Style(const Style& other);
+        /** Attribute-based constructor
+
+            Copies values from the attribute.
+
+            @param attribute Attribute to copy values from.
+        */
+        Style(const Attribute& attribute);
         /** Assignment operator
             @param other Object to assign from
             @return A reference to this
@@ -36,7 +43,20 @@ class Style : public Attribute
         Style& operator=(const Style& other);
 
     protected:
-        std::vector<DStringPair>    styles;
+        std::vector<DStringPair>    styles_;
+
+        /** Parses string for css styles and adds them
+
+            Given string is parsed for css styles. Every extracted style is
+            added to styles_ vector and value_ variable.
+            Name and value should of a style should be separated by ':'.
+            Multiple styles should be separeted by ';'.
+            Any whitespaces in names or values will be included.
+
+            @param str String to parse.
+            @return Number of successfully added styles.
+        */
+        unsigned int    ParseStringForStyles(std::string str);
 
     private:
 };
