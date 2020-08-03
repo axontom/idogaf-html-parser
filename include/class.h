@@ -36,8 +36,26 @@ class Class : public Attribute
          */
         Class& operator=(const Class& other);
 
+        //Getters
+        /** Get every class contained by this attribute in form of vector
+            @return Vector of strings, with classes contained by this attribute.
+        */
+        std::vector<std::string> GetClassesInVector();
+
         //Setters
         void SetName(std::string name) delete;
+
+        //Other
+        /** Checks if this attributes contains class of a given name.
+
+            Compares given name with classes contained by this attributes.
+            Comparison is case sensitive.
+
+            @param className Name of class to match.
+            @return True if any class contained by this attribute matches
+            given name. False otherwise.
+        */
+        bool Matches(std::string className);
 
     protected:
         std::vector<std::string> classes_;

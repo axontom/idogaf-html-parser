@@ -90,18 +90,108 @@ class Element
         Element& operator=(const Element& other);
 
         //Getters
+        /** Get tag name of this element
+            @return Tag name of this element
+            or an empty string if name has not been set.
+        */
         std::string             GetName();
+        /** Get text contained by this element.
+            @return Text contained by this element
+            or an empty string if the text has not been set.
+        */
         std::string             GetText();
+        /** Get pointer to the parent of this element
+            @return A pointer to the parent
+            or nullptr if the parent has not been set.
+        */
         Element*                GetParent();
+        /** Get 'class' attribute of this element
+            @return Class object matching this elements css class
+            or nullptr if this element has no class attribute.
+        */
+        Class                   GetClass();
+        /** Get 'id' attribute of this element
+            @return Id object matching this elements id
+            or nullptr if this element has no id attribute.
+        */
+        Id                      GetId();
+        /** Get 'style' attribute of this element
+            @return Style object matching this elements styles
+            or nullptr if this element has no style attribute.
+        */
+        Style                   GetStyle();
+        /** Get children of this element
+            @return Vector containing pointers to all children of this element
+            or an empty vector if this element has no children.
+        */
         std::vector<Element*>   GetChildren();
+        /** Get children of this element by tag name.
+
+            Finds and returns every child matching given name.
+            The search is case sensitive.
+
+            @param name Name of the child to find.
+            @return Vector containing pointers to all children
+            of this element matching given name
+            or an empty vector if this element has no children
+            matching given name.
+        */
         std::vector<Element*>   GetChildrenByTagName(std::string name);
+        /** Get children of this element by class name.
+
+            Finds and returns every child matching given css class.
+            The search is case sensitive.
+
+            @param name Class to find children by.
+            @return Vector containing pointers to all children
+            of this element matching given class name
+            or an empty vector if this element has no children
+            matching given class name.
+        */
         std::vector<Element*>   GetChildrenByClassName(std::string name);
+        /** Get children of this element by id.
+
+            Finds and returns every child matching given id.
+            The search is case sensitive.
+
+            @param id Id to check children for.
+            @return Vector containing pointers to all children
+            of this element matching given id
+            or an empty vector if this element has no children
+            matching given id.
+        */
         std::vector<Element*>   GetChildrenById(std::string id);
+        /** Get first child of this element
+            @return Pointer to the first child or nullptr
+            if this element has no children.
+        */
         Element*                GetFirstChild();
+        /** Get pointer to a child at a given position
+            @param position Position of the child.
+            @return Pointer to child at requested position
+            or nullptr if number of children this element has is
+            smaller (or equal to) then requested position.
+        */
         Element*                GetChildAt(unsigned int position);
+        /** Get pointer to the last child of this element
+            @return Pointer to the last child or nullptr
+            if this element has no children.
+        */
         Element*                GetLastChild();
+        /** Get number of children this element has.
+            @return Number of children this element has.
+        */
         unsigned int            GetChildrenCount();
+        /** Get all attributes of this element
+            @return Vector containing all of this elements attributes
+            (class, id and style included). Empty vector if this element
+            has no attributes.
+        */
         std::vector<Attribute>  GetAttributes();
+        /** Get this elements attribute by name
+            @return Attribute object containing attribute matching given name
+            or nullptr if a matching attribute has not been found.
+        */
         Attribute               GetAttributeByName(std::string name);
 
 
