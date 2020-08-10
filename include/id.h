@@ -32,7 +32,16 @@ class Id : public Attribute
          */
         Id& operator=(const Id& other);
 
+        //Getters
         static std::string GetStaticName();
+
+        //Setters
+        /** Set this attributes name
+
+            @ATT This function does nothing. It's here only for compatibility
+            purposes.
+        */
+        void SetName(std::string name);
 
     protected:
 

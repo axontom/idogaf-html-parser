@@ -53,6 +53,9 @@ Class& Class::operator=(const Class& rhs)
 std::vector<std::string> Class::GetClassesInVector() { return classes_; }
 static std::string Class::GetStaticName() { return "class"; }
 
+//Setters
+void Class::SetName(std::string name) {}
+
 //Other
 bool Class::Matches(std::string className)
 {

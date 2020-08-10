@@ -34,5 +34,9 @@ Id& Id::operator=(const Id& rhs)
     return *this;
 }
 
+//Getters
 static std::string Id::GetStaticName() { return "id"; }
+
+//Setters
+void Id::SetName(std::string name) {}
 }

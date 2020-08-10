@@ -44,7 +44,12 @@ class Class : public Attribute
         static std::string          GetStaticName();
 
         //Setters
-        void SetName(std::string name) delete;
+        /** Set this attributes name
+
+            @ATT This function does nothing. It's here only for compatibility
+            purposes.
+        */
+        void SetName(std::string name);
 
         //Other
         /** Checks if this attribute contains class of a given name.

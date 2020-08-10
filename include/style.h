@@ -42,7 +42,16 @@ class Style : public Attribute
          */
         Style& operator=(const Style& other);
 
+        //Getters
         static std::string GetStaticName();
+
+        //Setters
+        /** Set this attributes name
+
+            @ATT This function does nothing. It's here only for compatibility
+            purposes.
+        */
+        void SetName(std::string name);
 
     protected:
         std::vector<DStringPair>    styles_;
