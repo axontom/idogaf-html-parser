@@ -180,31 +180,89 @@ Attribute Element::GetAttributeByName(std::string name)
 void Element::SetName(std::string name) { name_ = name; }
 void Element::SetText(std::string text) { text_ = text; }
 void Element::AddText(std::string text) { text_ += text; }
-void Element::SetParent(Element* parent) { parent_ = parent; }
+void Element::SetParent(Element* parent)
+{
+    //Remove this element from it's current parent vector.
+    if(parent_ != nullptr)
+    {
+        for(auto it = parent_->children_.begin();
+            it != parent_->children_.end();++it)
+        {
+            if(*it == this)
+                parent_.children_.erase(it);
+        }
+    }
+    parent_ = parent;
+    if(parent_ == nullptr) return;
+    //Add this to the new parents vector if it's not already there.
+    for(auto it = parent_->children_.begin();
+        it != parent_->children_.end();++it)
+    {
+        if(*it == this) return;
+    }
+    parent_.children_.push_back(this);
+}
+void Element::RemoveParent()
+{
+    if(parent_ != nullptr)
+    {
+        for(auto it = parent_->children_.begin();
+            it != parent_->children_.end();++it)
+        {
+            if(*it == this)
+                parent_.children_.erase(it);
+        }
+    }
+    parent_ = nullptr;
+}
 void Element::SetClass(Class newClass) { class_ = newClass; }
 void Element::SetId(Id id) { id_ = id; }
 void Element::SetStyle(Style style) { style_ = style; }
 
-void Element::RemoveChildren() { children_.clear(); }
+void Element::RemoveChildren()
+{
+    for(auto it = children_.begin();it != children_.end();++it)
+        *it->parent_ = nullptr;
+    children_.clear();
+}
 void Element::RemoveChildAt(unsigned int position)
 {
     if(position >= children_.size()) return;
 
+    children_[position]->parent_ = nullptr;
     children_.erase(children_.begin()+position);
 }
 void Element::AddChild(Element* child)
 {
-    if(child != nullptr)
-        children_.push_back(child);
+    if(child == nullptr) return;
+
+    for(auto it = children_.begin();it != children_.end();++it)
+    {
+        if(*it == child) return;
+    }
+
+    child->RemoveParent();
+    children_.push_back(child);
+    child->parent_ = this;
 }
 void Element::AddChildAt(Element* child, unsigned int position)
 {
     if(position >= children_.size()) return;
     if(child == nullptr) return;
+
+    for(auto it = children_.begin();it != children_.end();++it)
+    {
+        if(*it == child) return;
+    }
+
+    child->RemoveParent();
     children_.insert(children_.begin()+position, child);
+    child->parent_ = this;
 }
 void Element::AddChildren(std::vector<Element*> children)
 {
+    for(auto it = children.begin();it != children.end();++it)
+        *it->RemoveParent();
     children_.insert(children_.end(), children.begin(), children.end());
 }
 

@@ -213,9 +213,25 @@ class Element
         */
         void                    AddText(std::string text);
         /** Set new parent element for this element
+
+            Sets given element as a parent to this element.
+            This element receives a pointer to the given element
+            and the given element receives pointer to this element as a child.
+            This element is added as the new parents last child.
+            If this element already had a parent, then the preious parent
+            will lose a pointer to this element.
+            If this child already is a part of the new parents children vector
+            then it's not added a second time.
+
             @param parent Pointer to an existing element to set as a parent.
         */
         void                    SetParent(Element* parent);
+        /** Remove parent from this element
+
+            Removes a pointer to the parent element from this.
+            Parents pointer to this element is also removed.
+        */
+        void                    RemoveParent();
         /** Set new css class attribute for this element
             @param newClass Class attribute to set.
         */
@@ -233,14 +249,16 @@ class Element
 
             Removes all children elements. This will not delete children
             elements objects, only connections between this element and
-            children elements.
+            children elements (this children pointers and every childs
+            parent pointer.
         */
         void                    RemoveChildren();
         /** Remove child element at a given position
 
             Removes child (a pointer) from this elements children vector.
-            Does not delete childs element object. If given position is invalid
-            (is greater or equal to vectors size) nothing happens.
+            Does not delete childs element object, but remove childs parent
+            pointer. If given position is invalid (is greater or
+            equal to vectors size) nothing happens.
 
             @param position Position of the child in this elements children
             vector. This corresponds with top to bottom order in html code.
@@ -251,6 +269,11 @@ class Element
 
             Adds child at the end of this elements children vector.
             If a given pointer equals nullptr it won't be added.
+            If a given child is already a child of this element
+            it won't be added.
+            The child will receive a pointer to this as parent
+            and any connection from the child to the previous parent
+            will be removed.
 
             @param child Pointer to a child element to add.
         */
@@ -261,6 +284,11 @@ class Element
             elements children vector. If a given pointer equals nullptr
             it won't be added. If given position is invalid
             (is greater or equal to vectors size) nothing happens.
+            If a given child is already a child of this element
+            it won't be added.
+            The child will receive a pointer to this as parent
+            and any connection from the child to the previous parent
+            will be removed.
 
             @param child Pointer to a child element to add.
             @param position Position to add a child at in this elements children
@@ -269,8 +297,13 @@ class Element
         */
         void                    AddChildAt(Element* child,
                                            unsigned int position);
-        /** Add children from a given vector to the end of this elements
-            children vector.
+        /** Add children from a given vector
+
+            Adds children from a given vector to the end of this elements
+            children vector. Every child also receives a pointer to this
+            element as parent. If any child in a given vector already has
+            a parent (including this element as parent), then every connection
+            to that parent will be removed first.
 
             @param children Vector of pointers to the Element objects of
             children to add.
