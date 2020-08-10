@@ -5,13 +5,13 @@ namespace idogaf
 Style::Style() : Attribute()
 {
     //ctor
-    name_ = "style";
+    name_ = Style.GetStaticName();
     styles_ = std::vector<DStringPair>();
 }
 
 Style::Style(const Attribute& attribute)
 {
-    name_ = "style";
+    name_ = Style.GetStaticName();
     value_ = "";
     styles_ = std::vector<DStringPair>();
     ParseStringForStyles(attribute.value_);
@@ -22,7 +22,7 @@ Style& Style::operator=(const Style& rhs)
 {
     if (this == &rhs) return *this; // handle self assignment
     //assignment operator
-    name_ = "style";
+    name_ = Style.GetStaticName();
     value_ = rhs.value_;
     return *this;
 }

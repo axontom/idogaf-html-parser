@@ -196,23 +196,102 @@ class Element
 
 
         //Setters
+
+        /** Set this elements name
+            @param name New name for this element.
+        */
         void                    SetName(std::string name);
+        /** Set text contained by this element
+            @param text Text to set.
+        */
         void                    SetText(std::string text);
+        /** Add text contained by this element
+
+            Adds new text at the end of already existing text.
+
+            @param text Text to add.
+        */
         void                    AddText(std::string text);
+        /** Set new parent element for this element
+            @param parent Pointer to an existing element to set as a parent.
+        */
         void                    SetParent(Element* parent);
+        /** Set new css class attribute for this element
+            @param newClass Class attribute to set.
+        */
         void                    SetClass(Class newClass);
+        /** Set new id attribute for this element
+            @param id Id attribute to set.
+        */
         void                    SetId(Id id);
+        /** Set new style attribute for this element
+            @param style Style attribute to set.
+        */
         void                    SetStyle(Style style);
 
+        /** Remove all children of this element
+
+            Removes all children elements. This will not delete children
+            elements objects, only connections between this element and
+            children elements.
+        */
         void                    RemoveChildren();
+        /** Remove child element at a given position
+
+            Removes child (a pointer) from this elements children vector.
+            Does not delete childs element object. If given position is invalid
+            (is greater or equal to vectors size) nothing happens.
+
+            @param position Position of the child in this elements children
+            vector. This corresponds with top to bottom order in html code.
+            Indexing is zero-based.
+        */
         void                    RemoveChildAt(unsigned int position);
+        /** Add child element to this element
+
+            Adds child at the end of this elements children vector.
+            If a given pointer equals nullptr it won't be added.
+
+            @param child Pointer to a child element to add.
+        */
         void                    AddChild(Element* child);
+        /** Add child to this element at a given position
+
+            Adds child before an element at a given position in this
+            elements children vector. If a given pointer equals nullptr
+            it won't be added. If given position is invalid
+            (is greater or equal to vectors size) nothing happens.
+
+            @param child Pointer to a child element to add.
+            @param position Position to add a child at in this elements children
+            vector. This corresponds with top to bottom order in html code.
+            Indexing is zero-based.
+        */
         void                    AddChildAt(Element* child,
                                            unsigned int position);
+        /** Add children from a given vector to the end of this elements
+            children vector.
+
+            @param children Vector of pointers to the Element objects of
+            children to add.
+        */
         void                    AddChildren(std::vector<Element*> children);
 
+        /** Remove all attributes from this element */
         void                    RemoveAttributes();
+        /** Remove attribute from this element by name
+
+            @param name Name of the attribute to remove
+        */
         void                    RemoveAttributeByName(std::string name);
+        /** Add an attribute to this element
+
+            Adds a given attribute to this element. If this element already
+            has an attribute equal to the given attributes, previous attribute
+            will be swapped for the new one.
+
+            @param attribute Attribute to add
+        */
         void                    AddAtrribute(Attribute attribute);
 
 

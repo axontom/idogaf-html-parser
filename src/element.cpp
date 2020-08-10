@@ -165,9 +165,9 @@ std::vector<Attribute> Element::GetAttributes()
 }
 Attribute Element::GetAttributeByName(std::string name)
 {
-    if(name == "class") return class_;
-    if(name == "id") return id_;
-    if(name == "style") return style_;
+    if(name == Class.GetStaticName()) return class_;
+    if(name == Id.GetStaticName()) return id_;
+    if(name == Style.GetStaticName()) return style_;
 
     for(auto it = attributes_.begin();it != attributes.end();++it)
     {
@@ -176,6 +176,101 @@ Attribute Element::GetAttributeByName(std::string name)
     return nullptr;
 }
 
+//Setters
+void Element::SetName(std::string name) { name_ = name; }
+void Element::SetText(std::string text) { text_ = text; }
+void Element::AddText(std::string text) { text_ += text; }
+void Element::SetParent(Element* parent) { parent_ = parent; }
+void Element::SetClass(Class newClass) { class_ = newClass; }
+void Element::SetId(Id id) { id_ = id; }
+void Element::SetStyle(Style style) { style_ = style; }
+
+void Element::RemoveChildren() { children_.clear(); }
+void Element::RemoveChildAt(unsigned int position)
+{
+    if(position >= children_.size()) return;
+
+    children_.erase(children_.begin()+position);
+}
+void Element::AddChild(Element* child)
+{
+    if(child != nullptr)
+        children_.push_back(child);
+}
+void Element::AddChildAt(Element* child, unsigned int position)
+{
+    if(position >= children_.size()) return;
+    if(child == nullptr) return;
+    children_.insert(children_.begin()+position, child);
+}
+void Element::AddChildren(std::vector<Element*> children)
+{
+    children_.insert(children_.end(), children.begin(), children.end());
+}
+
+void Element::RemoveAttributes()
+{
+    attributes_.clear();
+    class_ = nullptr;
+    id_ = nullptr;
+    style_ = nullptr;
+}
+void Element::RemoveAttributeByName(std::string name)
+{
+    if(name == Class.GetStaticName())
+    {
+        class_ = nullptr;
+        return;
+    }
+    if(name == Id.GetStaticName())
+    {
+        id_ = nullptr;
+        return;
+    }
+    if(name == Style.GetStaticName())
+    {
+        style_ = nullptr;
+        return;
+    }
+
+    for(auto it = attributes_.begin();it != attributes.end();++it)
+    {
+        if(it->GetName() == name)
+        {
+            attributes_.erase(it);
+            return;
+        }
+    }
+}
+void Element::AddAtrribute(Attribute attribute)
+{
+    if(attribute.GetName() == Class.GetStaticName())
+    {
+        class_ = Class(attribute);
+        return;
+    }
+    if(attribute.GetName() == Id.GetStaticName())
+    {
+        id_ = Id(attribute);
+        return;
+    }
+    if(attribute.GetName() == Style.GetStaticName())
+    {
+        style_ = Style(attribute);
+        return;
+    }
+
+    for(auto it = attributes_.begin();it != attributes.end();++it)
+    {
+        if(it->GetName() == attribute.GetName())
+        {
+            *it = attribute;
+            return;
+        }
+    }
+
+    attributes_.push_back(attribute);
+}
 
 
 //Protected member functions

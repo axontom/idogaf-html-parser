@@ -42,6 +42,8 @@ class Style : public Attribute
          */
         Style& operator=(const Style& other);
 
+        static std::string GetStaticName();
+
     protected:
         std::vector<DStringPair>    styles_;
 

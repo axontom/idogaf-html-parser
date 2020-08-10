@@ -5,7 +5,7 @@ namespace idogaf
 Id::Id() : Attribute()
 {
     //ctor
-    name_ = "id";
+    name_ = Id.GetStaticName();
 }
 
 Id::~Id()
@@ -16,12 +16,12 @@ Id::~Id()
 Id::Id(const Id& other) : Attribute(other)
 {
     //copy ctor
-    name_ = "id";
+    name_ = Id.GetStaticName();
 }
 
 Id::Id(const Attribute& attribute)
 {
-    name_ = "id";
+    name_ = Id.GetStaticName();
     value_ = attribute.value_;
 }
 
@@ -29,7 +29,7 @@ Id& Id::operator=(const Id& rhs)
 {
     if (this == &rhs) return *this; // handle self assignment
     //assignment operator
-    name_ = "id";
+    name_ = Id.GetStaticName();
     value_ = rhs.value_;
     return *this;
 }

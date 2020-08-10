@@ -41,6 +41,7 @@ class Class : public Attribute
             @return Vector of strings, with classes contained by this attribute.
         */
         std::vector<std::string> GetClassesInVector();
+        static std::string GetStaticName();
 
         //Setters
         void SetName(std::string name) delete;

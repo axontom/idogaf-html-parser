@@ -32,6 +32,8 @@ class Id : public Attribute
          */
         Id& operator=(const Id& other);
 
+        static std::string GetStaticName();
+
     protected:
 
     private:
