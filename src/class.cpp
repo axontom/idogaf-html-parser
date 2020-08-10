@@ -48,4 +48,18 @@ Class& Class::operator=(const Class& rhs)
     //assignment operator
     return *this;
 }
+
+//Getters
+std::vector<std::string> Class::GetClassesInVector() { return classes_; }
+static std::string Class::GetStaticName() { return "class"; }
+
+//Other
+bool Class::Matches(std::string className)
+{
+    for(auto it = classes_.begin();it != classes_.end();++it)
+    {
+        if(*it == className) return true;
+    }
+    return false;
+}
 }

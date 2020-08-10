@@ -40,14 +40,14 @@ class Class : public Attribute
         /** Get every class contained by this attribute in form of vector
             @return Vector of strings, with classes contained by this attribute.
         */
-        std::vector<std::string> GetClassesInVector();
-        static std::string GetStaticName();
+        std::vector<std::string>    GetClassesInVector();
+        static std::string          GetStaticName();
 
         //Setters
         void SetName(std::string name) delete;
 
         //Other
-        /** Checks if this attributes contains class of a given name.
+        /** Checks if this attribute contains class of a given name.
 
             Compares given name with classes contained by this attributes.
             Comparison is case sensitive.

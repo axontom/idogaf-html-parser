@@ -33,4 +33,6 @@ Id& Id::operator=(const Id& rhs)
     value_ = rhs.value_;
     return *this;
 }
+
+static std::string Id::GetStaticName() { return "id"; }
 }

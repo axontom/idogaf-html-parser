@@ -32,6 +32,8 @@ Style::~Style()
     //dtor
 }
 
+static std::string Style::GetStaticName() { return "style"; }
+
 //Protected member functions
 unsigned int Style::ParseStringForStyles(std::string str)
 {
