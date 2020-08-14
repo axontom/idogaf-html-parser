@@ -4,6 +4,7 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+#include <new>
 #include <string>
 #include <vector>
 #include "attribute.h"
@@ -78,16 +79,27 @@ class Element
                 std::vector<Element*> children, Element* parent,
                 Class css_class, Id id, Style style);
         /** Copy constructor
+
+            Deleted. Operate on pointers instead.
+
             @param other Object to copy from
          */
-        Element(const Element& other);
-        /** Default destructor */
-        virtual ~Element();
+        Element(const Element& other) = delete;
         /** Assignment operator
+
+            Deleted. Operate on pointers instead.
+
             @param other Object to assign from
             @return A reference to this
          */
-        Element& operator=(const Element& other);
+        Element& operator=(const Element& other) = delete;
+        /** Destroying deallocation operator
+
+            Enables using destructor during deletion of heap-allocated objects.
+
+            @param element Pointer to this object.
+        */
+        void operator delete(Element* element, std::destroying_delete_t);
 
         //Getters
         /** Get tag name of this element
@@ -353,6 +365,13 @@ class Element
         void                    SetDefaultValues();
 
     private:
+        /** Private destructor
+
+            It prevents stack allocation - Element object should only be
+            initialized using 'new' operator.
+        */
+        ~Element() = default;
+
 };
 }
 

@@ -1,4 +1,5 @@
 #include "element.h"
+#include "manager.h"
 
 namespace idogaf
 {
@@ -7,19 +8,22 @@ Element::Element()
 {
     //ctor
     SetDefaultValues();
+    Manager::Add(this);
 }
 
 Element::Element(std::string name)
 {
     SetDefaultValues();
     name_ = name;
+    Manager::Add(this);
 }
 
 Element::Element(std::string name, Element* parent)
 {
     SetDefaultValues();
     name_ = name;
-    parent_ = parent;
+    SetParent(parent);
+    Manager::Add(this);
 }
 
 Element::Element(std::string name, std::string text,
@@ -29,7 +33,7 @@ Element::Element(std::string name, std::string text,
     name_ = name;
     text_ = text;
     children_ = children != nullptr ? children : vector<Element*>();
-    parent_ = parent;
+    SetParent(parent);
     attributes_ = vector<Attribute>();
     if (attributes != nullptr)
     {
@@ -53,6 +57,7 @@ Element::Element(std::string name, std::string text,
             }
         }
     }
+    Manager::Add(this);
 }
 
 Element::Element(std::string name, std::string text,
@@ -62,12 +67,14 @@ Element::Element(std::string name, std::string text,
     name_ = name;
     text_ = text;
     children_ = children != nullptr ? children : vector<Element*>();
-    parent_ = parent;
+    SetParent(parent);
     class_ = css_class;
     id_ = id;
     style_ = style;
+    Manager::Add(this);
 }
-
+/*  Removed 14.08.20
+    Only poiters should be copied, not objects.
 Element::Element(const Element& other)
 {
     //copy ctor
@@ -79,6 +86,7 @@ Element::Element(const Element& other)
     class_ = other.class_;
     id_ = other.id_;
     style_ = other.style_;
+    Manager::Add(this);
 }
 
 Element& Element::operator=(const Element& rhs)
@@ -95,11 +103,12 @@ Element& Element::operator=(const Element& rhs)
     style_ = other.style_;
     return *this;
 }
+*/
 
-//Destructor
-Element::~Element()
+void Element::operator delete(Element* element, std::destroying_delete_t)
 {
-    //dtor
+    element->~Element();
+    delete(element);
 }
 
 //Public member fuctions
