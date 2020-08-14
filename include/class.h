@@ -4,7 +4,8 @@
 #ifndef CLASS_H
 #define CLASS_H
 
-#include <attribute.h>
+#include <vector>
+#include "attribute.h"
 
 namespace idogaf
 {

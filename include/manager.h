@@ -18,7 +18,7 @@ class Manager
         */
         static void Add(Element* element);
         /** Delete every Element object associated with the memory manager */
-        static void Cleanup()
+        static void Cleanup();
 
     protected:
 

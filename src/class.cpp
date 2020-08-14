@@ -6,15 +6,15 @@ namespace idogaf
 Class::Class() : Attribute()
 {
     //ctor
-    name_ = Class.GetStaticName();
+    name_ = Class::GetStaticName();
     classes_ = std::vector<std::string>();
 }
 
 
 Class::Class(const Attribute& attribute)
 {
-    name_ = Class.GetStaticName();
-    value_ = attribute.value_;
+    name_ = Class::GetStaticName();
+    value_ = attribute.GetValue();
     classes_ = std::vector<std::string>();
     if(!value_.empty())
     {
@@ -32,7 +32,7 @@ Class::Class(const Attribute& attribute)
 Class::Class(const Class& other)
 {
     //copy ctor
-    name_ = Class.GetStaticName();
+    name_ = Class::GetStaticName();
     value_ = other.value_;
     classes_ = other.classes_;
 }
@@ -51,7 +51,7 @@ Class& Class::operator=(const Class& rhs)
 
 //Getters
 std::vector<std::string> Class::GetClassesInVector() { return classes_; }
-static std::string Class::GetStaticName() { return "class"; }
+std::string Class::GetStaticName() { return "class"; }
 
 //Setters
 void Class::SetName(std::string name) {}

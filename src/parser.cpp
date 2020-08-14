@@ -12,7 +12,6 @@ Parser::Parser()
 {
     //ctor
     silent_ = false;
-    document_ = nullptr;
 }
 
 Parser::Parser(const Parser& other)
@@ -32,7 +31,7 @@ Parser& Parser::operator=(const Parser& rhs)
 }
 
 //Getters
-Document* Parser::GetDocument() { return &document; }
+Document* Parser::GetDocument() { return &document_; }
 
 //Setters
 void Parser::Silent(bool silent) { silent_ = silent; }
@@ -58,7 +57,8 @@ bool Parser::Parse(std::istream& stream)
     bool closingTag, emptyTag;
     std::string textBeforeTag;
     std::stack<Element*> eStack;
-    Element* A,B;
+    Element* A;
+    Element* B;
     A = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
     if(A == nullptr) return !stream.fail();
     else if(emptyTag || closingTag)
@@ -190,7 +190,7 @@ Element* Parser::ParseTagForElement(const std::string& tag)
         sstream >> buffer;
     } catch(const std::ios_base::failure& e)
     {
-        if(!silent)
+        if(!silent_)
         {
             std::cerr   << "ios_base::failure exception caught while parsing a tag.\n"
                         << "Error code: " << e.code() << '\n';
@@ -209,7 +209,7 @@ Element* Parser::ParseTagForElement(const std::string& tag)
 Attribute Parser::ParseStringForAttribute(const std::string& str)
 {
     size_t eqPos = str.find('=');
-    if(eqPos == std::string::npos) return nullptr;
+    if(eqPos == std::string::npos) return Attribute(str);
     //Assuming format name="value"
     std::string name = str.substr(0, eqPos);
     std::string value = str.substr(eqPos+2,str.length()-eqPos-2-1);

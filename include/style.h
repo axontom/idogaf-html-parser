@@ -5,7 +5,8 @@
 #define STYLE_H
 
 #include <string>
-#include <attribute.h>
+#include <vector>
+#include "attribute.h"
 
 namespace idogaf
 {

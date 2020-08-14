@@ -34,6 +34,7 @@ Document& Document::operator=(const Document& rhs)
 //Getters
 std::string Document::GetDoctype() { return doctype_; }
 Element* Document::GetRoot() { return root_; }
+bool Document::IsEmpty() { return doctype_.empty() && root_ == nullptr; }
 
 //Setters
 void Document::SetDoctype(std::string doctype) { doctype_ = doctype; }

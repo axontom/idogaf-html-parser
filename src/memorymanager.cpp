@@ -7,16 +7,16 @@ MemoryManager::MemoryManager()
     //ctor
 }
 
-MemoryManager::Add(Element* element)
+void MemoryManager::Add(Element* element)
 {
     list_.push_back(element);
 }
 
-MemoryManager::Cleanup()
+void MemoryManager::Cleanup()
 {
     for(size_t i = 0; i < list_.size();i++)
         delete list_[i];
-    list_.erase();
+    list_.clear();
 }
 
 MemoryManager::~MemoryManager()

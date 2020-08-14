@@ -34,7 +34,7 @@ class Attribute
         Attribute(std::string name, std::string value);
 
         /** Default destructor */
-        virtual ~Attribute();
+        ~Attribute() = default;
         /** Copy constructor
 
             @param other Object to copy from.
@@ -53,12 +53,12 @@ class Attribute
             @return Name of the attribute or
             an empty string if no name has been set.
         */
-        std::string     GetName();
+        std::string     GetName() const;
         /** Returns the value of the attribute
 
             @return Data stored in attribute.
         */
-        std::string     GetValue();
+        std::string     GetValue() const;
 
         //Setters
         /** Sets the name of the attribute

@@ -118,20 +118,20 @@ class Element
         */
         Element*                GetParent();
         /** Get 'class' attribute of this element
-            @return Class object matching this elements css class
+            @return Pointer to a Class object matching this elements css class
             or nullptr if this element has no class attribute.
         */
-        Class                   GetClass();
+        Class*                  GetClass();
         /** Get 'id' attribute of this element
-            @return Id object matching this elements id
+            @return Pointer to an Id object matching this elements id
             or nullptr if this element has no id attribute.
         */
-        Id                      GetId();
+        Id*                     GetId();
         /** Get 'style' attribute of this element
-            @return Style object matching this elements styles
+            @return Pointer to a Style object matching this elements styles
             or nullptr if this element has no style attribute.
         */
-        Style                   GetStyle();
+        Style*                  GetStyle();
         /** Get children of this element
             @return Vector containing pointers to all children of this element
             or an empty vector if this element has no children.
@@ -201,10 +201,10 @@ class Element
         */
         std::vector<Attribute>  GetAttributes();
         /** Get this elements attribute by name
-            @return Attribute object containing attribute matching given name
-            or nullptr if a matching attribute has not been found.
+            @return Pointer to an Attribute object containing attribute matching
+            given name or nullptr if a matching attribute has not been found.
         */
-        Attribute               GetAttributeByName(std::string name);
+        Attribute*              GetAttributeByName(std::string name);
 
 
         //Setters
@@ -346,9 +346,9 @@ class Element
         std::vector<Element*>   children_;
         Element*                parent_;
         std::vector<Attribute>  attributes_;
-        Class                   class_;
-        Id                      id_;
-        Style                   style_;
+        Class*                  class_;
+        Id*                     id_;
+        Style*                  style_;
 
         /** Initializes member variables and sets them to default values
 

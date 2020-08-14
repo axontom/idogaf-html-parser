@@ -106,20 +106,20 @@ class Parser
             @param tag String containing a tag to parse.
             @return Pointer to an Element object or nullptr if a function fails.
         */
-        Element*    ParseTagForElement(const std:string& tag);
+        Element*    ParseTagForElement(const std::string& tag);
         /** Parse string for an attribute
 
             Parses string for an attribute, extracting it's name and value.
             The given string should be in a form of 'name="value"'
             (excluding ' character). If the string doesn't contain '=' character
-            this function returns nullptr, otherwise it returns an Attribute
-            object with the name created from part of the string to the left of
+            this function returns an Attribute object with a name of a given
+            string and no value, otherwise it returns an Attribute object
+            with the name created from part of the string to the left of
             the '=' sign and value from a right part, excluding the last
             character and the first character after '='.
 
             @param str String to parse.
-            @return Attribute object or a nullptr, if given string doesn't
-            contain '='.
+            @return An Attribute object.
         */
         Attribute   ParseStringForAttribute(const std::string& str);
 

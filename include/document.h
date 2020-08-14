@@ -38,6 +38,10 @@ class Document
             @return Pointer to the root element of this document.
         */
         Element*    GetRoot();
+        /** Check if document is empty
+            @return True if root and doctype were not set, False otherwise.
+            */
+        bool        IsEmpty();
 
         //Setters
         /** Set the root element of this document

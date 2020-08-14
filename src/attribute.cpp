@@ -23,11 +23,6 @@ Attribute::Attribute(std::string name, std::string value)
     value_ = value;
 }
 
-Attribute::~Attribute()
-{
-    //dtor
-}
-
 Attribute::Attribute(const Attribute& other)
 {
     //copy ctor
@@ -45,8 +40,8 @@ Attribute& Attribute::operator=(const Attribute& rhs)
 }
 
 //Getters
-std::string Attribute::GetName() { return name_; }
-std::string Attribute::GetValue() { return value_; }
+std::string Attribute::GetName() const { return name_; }
+std::string Attribute::GetValue() const { return value_; }
 
 //Setters
 void Attribute::SetName(std::string name) { name_ = name; }
