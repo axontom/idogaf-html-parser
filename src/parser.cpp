@@ -106,6 +106,72 @@ bool Parser::Parse(std::istream& stream)
     }
 }
 
+bool Parser::WriteToFile(const std::string& filename)
+{
+    std::ofstream file;
+    file.open(filename);
+    bool ret = WriteToStream(file);
+    file.close();
+    return ret;
+}
+
+bool Parser::WriteToStream(std::ostream& stream)
+{
+    Element* current = document_.GetRoot();
+    if(current == nullptr) return false;
+
+    //Print doctype if exists
+    if(!document_.GetDoctype().empty())
+        stream << "<!DOCTYPE " << document_.GetDoctype() << " >\n";
+
+    std::stack<unsigned int> uiStack;
+    unsigned int curSiblingPos = 0;
+    unsigned int indent = 0;
+    bool running = true;
+    while(running)
+    {
+        WriteOpeningTag(current, stream, indent);
+
+        //This is just temporary solution...
+        if(!current->GetText().empty())
+            stream << GetIndentation(indent) << current->GetText() << std::endl;
+
+        if(current->GetChildrenCount() > 0)
+        {
+            uiStack.push(curSiblingPos);
+            current = current->GetFirstChild();
+            curSiblingPos = 0;
+            indent++;
+        }
+        else
+        {
+            while(true)
+            {
+                if(current->GetParent() == nullptr)
+                {
+                    WriteClosingTag(current, stream, indent);
+                    running = false;
+                    break;
+                }
+                else if(current->GetParent()->GetChildAt(++curSiblingPos) != nullptr)
+                {
+                    current = current->GetParent()->GetChildAt(curSiblingPos);
+                    break;
+                }
+                else
+                {
+                    current = current->GetParent();
+                    curSiblingPos = uiStack.top();
+                    uiStack.pop();
+                    indent--;
+                    WriteClosingTag(current, stream, indent);
+                }
+            }
+        }
+    }
+    return true;
+}
+
 //Protected member functions
 Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                              bool& closeOut, std::string& textOut)
@@ -214,6 +280,40 @@ Attribute Parser::ParseStringForAttribute(const std::string& str)
     std::string name = str.substr(0, eqPos);
     std::string value = str.substr(eqPos+2,str.length()-eqPos-2-1);
     return Attribute(name, value);
+}
+
+void Parser::WriteOpeningTag(Element* element, std::ostream& stream,
+                             unsigned int indent)
+{
+    if(element == nullptr) return;
+
+    stream << GetIndentation(indent) << '<' << element->GetName() << ' ';
+
+    std::vector<Attribute> attributes = element->GetAttributes();
+
+    for(auto it = attributes.begin();it != attributes.end();++it)
+        stream << it->GetName() << "=\"" << it->GetValue() << "\" ";
+    if(element->GetChildrenCount() == 0)
+        stream << "/";
+
+    stream << ">\n";
+}
+
+void Parser::WriteClosingTag(Element* element, std::ostream& stream,
+                             unsigned int indent)
+{
+    if(element == nullptr) return;
+
+    stream << GetIndentation(indent) << "</" << element->GetName() << ">\n";
+}
+
+std::string Parser::GetIndentation(unsigned int level) const
+{
+    if(level == 0) return "";
+    std::string indentation;
+    for(unsigned int i = 0;i < level;i++)
+        indentation += '\t';
+    return indentation;
 }
 
 }

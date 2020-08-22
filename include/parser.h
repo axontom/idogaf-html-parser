@@ -5,6 +5,7 @@
 #define PARSER_H
 
 #include <istream>
+#include <ostream>
 #include <string>
 #include "attribute.h"
 #include "document.h"
@@ -48,8 +49,39 @@ class Parser
         void        Silent(bool silent = false);
 
         //Other
+        /** Parse html document from file
+
+            Parses document to Document object. To retrieve parsed Document
+            object use GetDocument().
+
+            @param filename Name of the file to parse.
+            @return True on success, False otherwise.
+        */
         bool        Parse(const std::string& filename);
+        /** Parse html document from stream
+
+            Parses document to Document object. To retrieve parsed Document
+            object use GetDocument().
+
+            @param stream Stream to read from.
+            @return True on success, False otherwise.
+        */
         bool        Parse(std::istream& stream);
+        /** Write current Document object to file
+
+            Writes document object from document_ variable to file with a given
+            filename.
+
+            @param filename Name of the output file.
+            @return True on success, False otherwise.
+        */
+        bool        WriteToFile(const std::string& filename);
+        /** Write current Document object to stream
+
+            @param stream Output stream to write to.
+            @return True on success, False otherwise.
+        */
+        bool        WriteToStream(std::ostream& stream);
 
     protected:
         bool        silent_;
@@ -122,6 +154,33 @@ class Parser
             @return An Attribute object.
         */
         Attribute   ParseStringForAttribute(const std::string& str);
+
+        /** Write opening tag of an element to stream
+
+            @param element Pointer to an element object to write the tag of.
+            @param stream Output stream to write to.
+            @param indent Level of indentation (number of tabs to write
+            before the tag).
+        */
+        void WriteOpeningTag(Element* element, std::ostream& stream,
+                             unsigned int indent = 0);
+        /** Write closing tag of an element to stream
+
+            @param element Pointer to an element object to write the tag of.
+            @param stream Output stream to write to.
+            @param indent Level of indentation (number of tabs to write
+            before the tag).
+        */
+        void WriteClosingTag(Element* element, std::ostream& stream,
+                             unsigned int indent = 0);
+        /** Get indentation as string
+
+            Returns string containing a given number of tabs.
+
+            @param level Level of indentation (number of tabs).
+            @return String with an indentation.
+        */
+        std::string GetIndentation(unsigned int level) const;
 
     private:
 };

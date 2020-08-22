@@ -182,7 +182,7 @@ class Element
             @param position Position of the child.
             @return Pointer to child at requested position
             or nullptr if number of children this element has is
-            smaller (or equal to) then requested position.
+            smaller or equal to the requested position.
         */
         Element*                GetChildAt(unsigned int position);
         /** Get pointer to the last child of this element

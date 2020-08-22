@@ -35,7 +35,8 @@ class Document
         std::string GetDoctype();
         /** Get the root element of the document
 
-            @return Pointer to the root element of this document.
+            @return Pointer to the root element of this document, nullptr if
+            the root element wasn't set.
         */
         Element*    GetRoot();
         /** Check if document is empty
