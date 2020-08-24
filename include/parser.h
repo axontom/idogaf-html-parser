@@ -157,6 +157,11 @@ class Parser
 
         /** Write opening tag of an element to stream
 
+            Write opening tag. If the tag has no children and no text,
+            it is written as an empty tag. If it has text, but has no children
+            then after the opening tag, the text is writen and it's closed by
+            calling the WriteClosingTag function.
+
             @param element Pointer to an element object to write the tag of.
             @param stream Output stream to write to.
             @param indent Level of indentation (number of tabs to write

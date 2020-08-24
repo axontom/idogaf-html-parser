@@ -132,10 +132,6 @@ bool Parser::WriteToStream(std::ostream& stream)
     {
         WriteOpeningTag(current, stream, indent);
 
-        //This is just temporary solution...
-        if(!current->GetText().empty())
-            stream << GetIndentation(indent) << current->GetText() << std::endl;
-
         if(current->GetChildrenCount() > 0)
         {
             uiStack.push(curSiblingPos);
@@ -221,6 +217,38 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             document_.SetDoctype(trim(activeBuffer));   //Set Doctype
             textOut += '\n';
         }
+        else if(activeBuffer.substr(0,7) == "<script")
+        {
+            //Extract anything between '<' and '>'
+            activeBuffer = activeBuffer.substr(1, activeBuffer.length()-1-1);
+            if(activeBuffer[activeBuffer.length()-1] == '/') //empty script tag
+            {
+                emptyOut = true;
+                activeBuffer = activeBuffer.substr(0,activeBuffer.length()-1);
+                return ParseTagForElement(activeBuffer);
+            }
+            ret = ParseTagForElement(activeBuffer);
+            activeBuffer = "";
+            buffer.str("");
+            while(stream.good())
+            {
+                stream.get(buffer, '<');
+                if(stream.peek() == '\n')
+                {
+                    buffer.sputc('\n');
+                    stream.get();
+                    continue;
+                }
+                std::string buf = " ";
+                for(int i = 1; i < 15 && buf[i-1] != '>';i++)
+                    buf += static_cast<char>(stream.get());
+                if(trim(buf.substr(3,buf.length()-3-1)) == "script") break;
+                else buffer.sputn(buf.c_str(),buf.length());
+            }
+            ret->AddText(buffer.str());
+            emptyOut = true;
+            return ret;
+        }
         else if(activeBuffer.substr(0,2) == "</")   //Closing tag
         {
             closeOut = true;
@@ -229,7 +257,7 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             ret->SetName(trim(activeBuffer));
             return ret;
         }
-        else if(activeBuffer.substr(activeBuffer.length()-2,2) == "/>") //
+        else if(activeBuffer.substr(activeBuffer.length()-2,2) == "/>")
         {
             emptyOut = true;
             //Extract anything between '<' and '/>'
@@ -293,10 +321,15 @@ void Parser::WriteOpeningTag(Element* element, std::ostream& stream,
 
     for(auto it = attributes.begin();it != attributes.end();++it)
         stream << it->GetName() << "=\"" << it->GetValue() << "\" ";
-    if(element->GetChildrenCount() == 0)
-        stream << "/";
-
-    stream << ">\n";
+    if(element->GetChildrenCount() == 0 && element->GetText().empty())
+        stream << "/>\n";
+    else if(element->GetChildrenCount() == 0 && !element->GetText().empty())
+    {
+        stream << ">\n" << GetIndentation(indent) << element->GetText() << "\n";
+        WriteClosingTag(element, stream, indent);
+    }
+    else
+        stream << ">\n";
 }
 
 void Parser::WriteClosingTag(Element* element, std::ostream& stream,
