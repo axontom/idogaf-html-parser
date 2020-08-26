@@ -32,10 +32,14 @@ class Parser
 
         //Getters
         /** Get parsed document
-
+            @return Copy of the parsed document.
+        */
+        Document    GetDocument();
+        /** Get parsed document
             @return Pointer to the parsed document.
         */
-        Document*   GetDocument();
+        Document*   GetDocumentPtr();
+        bool        Silent();
 
         //Setters
         /** Set parsers silent mode
@@ -75,13 +79,15 @@ class Parser
             @param filename Name of the output file.
             @return True on success, False otherwise.
         */
-        bool        WriteToFile(const std::string& filename);
+        //Temporary removed until next update. Needs to be redone.
+        //bool        WriteToFile(const std::string& filename);
         /** Write current Document object to stream
 
             @param stream Output stream to write to.
             @return True on success, False otherwise.
         */
-        bool        WriteToStream(std::ostream& stream);
+        //Temporary removed until next update. Needs to be redone.
+        //bool        WriteToStream(std::ostream& stream);
 
     protected:
         bool        silent_;
@@ -119,10 +125,10 @@ class Parser
             Output parameter, if any text was found before the next tag, this
             will contain it, otherwise it will be empty.
 
-            @return Pointer to an Element object with the next tag,
-            or nullptr if the stream ended or failed.
+            @return An Element object with the next tag,
+            or an empty element if the stream ended or failed.
         */
-        Element*    ReadNextTag(std::istream& stream, bool& emptyOut,
+        Element     ReadNextTag(std::istream& stream, bool& emptyOut,
                                 bool& closeOut, std::string& textOut);
         /** Parse tag for an element
 
@@ -136,9 +142,9 @@ class Parser
             message is written to stderr.
 
             @param tag String containing a tag to parse.
-            @return Pointer to an Element object or nullptr if a function fails.
+            @return An Element object or an empty element if this function fails.
         */
-        Element*    ParseTagForElement(const std::string& tag);
+        Element     ParseTagForElement(const std::string& tag);
         /** Parse string for an attribute
 
             Parses string for an attribute, extracting it's name and value.
@@ -186,6 +192,15 @@ class Parser
             @return String with an indentation.
         */
         std::string GetIndentation(unsigned int level) const;
+        /** End with unexpected tag error
+
+            Prints unexpected tag error message, if parser doesn't run in
+            silen mode.
+
+            @param tagName Name of the unexpected tag.
+            @return Always false.
+        */
+        bool UnexpectedTagError(std::string tagName);
 
     private:
 };

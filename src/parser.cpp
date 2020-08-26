@@ -31,7 +31,9 @@ Parser& Parser::operator=(const Parser& rhs)
 }
 
 //Getters
-Document* Parser::GetDocument() { return &document_; }
+Document Parser::GetDocument() { return document_; }
+Document* Parser::GetDocumentPtr() { return &document_; }
+bool Parser::Silent() { return silent_; }
 
 //Setters
 void Parser::Silent(bool silent) { silent_ = silent; }
@@ -57,55 +59,51 @@ bool Parser::Parse(std::istream& stream)
     bool closingTag, emptyTag;
     std::string textBeforeTag;
     std::stack<Element*> eStack;
+    Element root;
     Element* A;
-    Element* B;
-    A = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
-    if(A == nullptr) return !stream.fail();
+    Element B;
+    root = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
+    if(root.Empty()) return !stream.fail();
     else if(emptyTag || closingTag)
     {
-        if(!silent_)
-        {
-            std::cerr << "Unexpected tag " << A->GetName() << std::endl;
-            std::cerr << "Document is probably ill formed.\n";
-        }
-        return false;
+        return UnexpectedTagError(root.GetName());
     }
+    A = &root;
     while(true)
     {
         B = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
-        if(B == nullptr) return !stream.fail();
+        if(!textBeforeTag.empty()) A->AddText(textBeforeTag);
+        if(B.Empty()) return !stream.fail();
         else if(emptyTag)
             A->AddChild(B);
         else if(closingTag)
         {
-            if(A->GetName() == B->GetName())
+            while(A->GetName() != B.GetName() && !eStack.empty())
             {
+                A = eStack.top();
+                eStack.pop();
+            }
+            if(A->GetName() == B.GetName())
+            {
+                if(eStack.empty()) return true;
                 A = eStack.top();
                 eStack.pop();
             }
             else
             {
-                Element* C;
-                do{
-                    C = eStack.top();
-                    eStack.pop();
-                    if(eStack.empty() && C->GetName() != B->GetName())
-                        return false;
-                    else if(eStack.empty()) return true;
-                } while(C->GetName() != B->GetName());
-                A = eStack.top();
-                eStack.pop();
+                return UnexpectedTagError(B.GetName());
             }
         }
         else
         {
             A->AddChild(B);
             eStack.push(A);
-            B = A;
+            A = A->GetLastChildPtr();
         }
     }
 }
 
+/* Temporary removed until next update. Needs to be redone.
 bool Parser::WriteToFile(const std::string& filename)
 {
     std::ofstream file;
@@ -166,17 +164,17 @@ bool Parser::WriteToStream(std::ostream& stream)
         }
     }
     return true;
-}
+}*/
 
 //Protected member functions
-Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
+Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                              bool& closeOut, std::string& textOut)
 {
     emptyOut = false;
     closeOut = false;
-    textOut = "";
+    textOut = std::string();
     std::string activeBuffer;
-    Element* ret = new Element();
+    Element ret = Element();
     std::stringbuf buffer;
 
     while(stream.good())
@@ -190,8 +188,8 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             while(stream.peek() == '\n') { stream.get(); }
         }
         textOut += trim(buffer.str());
-        //here in next char in stream is '<' (next tag ready to extract)
-        //and in textOut we have any text (nicely trimmed) between
+        //Here in next char in stream is '<' (next tag ready to extract).
+        //Iin textOut we have any text (nicely trimmed) between
         //the stream cursor at the moment this func was called
         //and the next tag
 
@@ -213,7 +211,7 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         else if(activeBuffer.substr(0,9) == "<!DOCTYPE")
         {
             //Extract anything between '<!DOCTYPE' and '>'
-            activeBuffer = activeBuffer.substr(8, activeBuffer.length()-8-1);
+            activeBuffer = activeBuffer.substr(9, activeBuffer.length()-9-1);
             document_.SetDoctype(trim(activeBuffer));   //Set Doctype
             textOut += '\n';
         }
@@ -227,6 +225,8 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                 activeBuffer = activeBuffer.substr(0,activeBuffer.length()-1);
                 return ParseTagForElement(activeBuffer);
             }
+            //Since script tag can't have children, we extract text
+            //and return element as empty but with text included
             ret = ParseTagForElement(activeBuffer);
             activeBuffer = "";
             buffer.str("");
@@ -245,7 +245,7 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                 if(trim(buf.substr(3,buf.length()-3-1)) == "script") break;
                 else buffer.sputn(buf.c_str(),buf.length());
             }
-            ret->AddText(buffer.str());
+            ret.AddText(buffer.str());
             emptyOut = true;
             return ret;
         }
@@ -254,10 +254,10 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             closeOut = true;
             //Extract anything between '</' and '>'
             activeBuffer = activeBuffer.substr(2, activeBuffer.length()-2-1);
-            ret->SetName(trim(activeBuffer));
+            ret.SetName(trim(activeBuffer));
             return ret;
         }
-        else if(activeBuffer.substr(activeBuffer.length()-2,2) == "/>")
+        else if(activeBuffer.substr(activeBuffer.length()-2,2) == "/>") //empty tag
         {
             emptyOut = true;
             //Extract anything between '<' and '/>'
@@ -273,10 +273,10 @@ Element* Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             return ParseTagForElement(activeBuffer);
         }
     }
-    return nullptr;
+    return ret;
 }
 
-Element* Parser::ParseTagForElement(const std::string& tag)
+Element Parser::ParseTagForElement(const std::string& tag)
 {
     std::stringstream sstream(tag);
     std::string buffer;
@@ -289,13 +289,13 @@ Element* Parser::ParseTagForElement(const std::string& tag)
             std::cerr   << "ios_base::failure exception caught while parsing a tag.\n"
                         << "Error code: " << e.code() << '\n';
         }
-        return nullptr;
+        return Element();
     }
-    Element* ret = new Element(buffer);  //construct with name
+    Element ret = Element(buffer);  //construct with name
     while(sstream.good())
     {
         sstream >> buffer;
-        ret->AddAtrribute(ParseStringForAttribute(buffer));
+        ret.AddAtrribute(ParseStringForAttribute(buffer));
     }
     return ret;
 }
@@ -347,6 +347,16 @@ std::string Parser::GetIndentation(unsigned int level) const
     for(unsigned int i = 0;i < level;i++)
         indentation += '\t';
     return indentation;
+}
+
+bool Parser::UnexpectedTagError(std::string tagName)
+{
+    if(!silent_)
+    {
+        std::cerr << "Unexpected tag " << tagName << std::endl;
+        std::cerr << "Document is probably ill formed.\n";
+    }
+    return false;
 }
 
 }
