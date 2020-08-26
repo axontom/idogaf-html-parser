@@ -15,7 +15,7 @@ class Document
         /** Default constructor */
         Document();
         /** Default destructor */
-        virtual ~Document();
+        ~Document() = default;
         /** Copy constructor
             @param other Object to copy from
          */
@@ -35,14 +35,20 @@ class Document
         std::string GetDoctype();
         /** Get the root element of the document
 
-            @return Pointer to the root element of this document, nullptr if
-            the root element wasn't set.
+            @return Copy of the root element of this document, empty element if
+            the root element has not been set.
         */
-        Element*    GetRoot();
+        Element     GetRoot();
+        /** Get the root element of the document
+
+            @return Pointer to the root element of this document, nullptr if
+            the root element has not been set.
+        */
+        Element*    GetRootPtr();
         /** Check if document is empty
             @return True if root and doctype were not set, False otherwise.
             */
-        bool        IsEmpty();
+        bool        Empty();
 
         //Setters
         /** Set the root element of this document
@@ -52,7 +58,7 @@ class Document
 
             @param root Pointer to the element to be set as root.
         */
-        void        SetRoot(Element* root);
+        void        SetRoot(Element root);
         /** Set doctype of this document
 
             @param doctype Doctype to set.
@@ -60,7 +66,7 @@ class Document
         void        SetDoctype(std::string doctype);
 
     protected:
-        Element*    root_;
+        Element     root_;
         std::string doctype_;
 
     private:

@@ -22,7 +22,10 @@ struct DStringPair
 class Style : public Attribute
 {
     public:
-        /** Default constructor */
+        /** Default constructor
+
+            Creates an object with no value.
+        */
         Style();
         /** Default destructor */
         virtual ~Style();

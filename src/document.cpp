@@ -5,8 +5,8 @@ namespace idogaf
 Document::Document()
 {
     //ctor
-    root_ = nullptr;
-    doctype_ = "";
+    root_ = Element();
+    doctype_ = std::string();
 }
 
 
@@ -15,11 +15,6 @@ Document::Document(const Document& other)
     //copy ctor
     root_ = other.root_;
     doctype_ = other.doctype_;
-}
-
-Document::~Document()
-{
-    //dtor
 }
 
 Document& Document::operator=(const Document& rhs)
@@ -33,16 +28,11 @@ Document& Document::operator=(const Document& rhs)
 
 //Getters
 std::string Document::GetDoctype() { return doctype_; }
-Element* Document::GetRoot() { return root_; }
-bool Document::IsEmpty() { return doctype_.empty() && root_ == nullptr; }
+Element Document::GetRoot() { return root_; }
+Element* Document::GetRootPtr() { return &root_; }
+bool Document::Empty() { return doctype_.empty() && root_.Empty(); }
 
 //Setters
 void Document::SetDoctype(std::string doctype) { doctype_ = doctype; }
-void Document::SetRoot(Element* root)
-{
-    root_ = root;
-    if(root != nullptr)
-        root_->RemoveParent();
-}
-
+void Document::SetRoot(Element root) { root_ = root; }
 }

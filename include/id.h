@@ -11,7 +11,10 @@ namespace idogaf
 class Id : public Attribute
 {
     public:
-        /** Default constructor */
+        /** Default constructor
+
+            Creates an object with no value.
+        */
         Id();
         /** Default destructor */
         virtual ~Id();

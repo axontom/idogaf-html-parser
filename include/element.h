@@ -26,20 +26,11 @@ class Element
             @param name Tag name of the element.
         */
         Element(std::string name);
-        /** Name-parent contructor
-
-            Constructs an Element object with a given tag name
-            as a child to a specified parent.
-
-            @param name Tag name of the element.
-            @param parent Parent for the element.
-        */
-        Element(std::string name, Element* parent);
         /** Full constructor
 
             Constructs an Element object,
-            setting custom values to all memeber variables.
-            If attributes vector contains attribute with name
+            setting custom values to all memeber variables (excluding the parent
+            pointer). If attributes vector contains attribute with name
             class, id or style, then corresponding member variables
             are set automatically.
 
@@ -47,27 +38,22 @@ class Element
 
             @param text Text to store inside this element.
 
-            @param children Vector of pointers to children elements.
-
-            @param parent Parent for the element.
+            @param children Vector of children elements.
 
             @param attributes Vector of attributes for the element.
         */
         Element(std::string name, std::string text,
-                std::vector<Element*> children, Element* parent,
-                std::vector<Attribute> attributes);
+                std::vector<Element> children, std::vector<Attribute> attributes);
         /** Common-attributes constructor
 
-            Constructs an Element object with a given name, text, parent,
+            Constructs an Element object with a given name, text and
             children as well as class, id and style attributes.
 
             @param name Tag name of the element.
 
             @param text Text to store inside this element.
 
-            @param children Vector of pointers to children elements.
-
-            @param parent Parent for the element.
+            @param children Vector of children elements.
 
             @param css_class Css class for the element.
 
@@ -76,32 +62,40 @@ class Element
             @param style Style for the element.
         */
         Element(std::string name, std::string text,
-                std::vector<Element*> children, Element* parent,
-                Class css_class, Id id, Style style);
+                std::vector<Element> children, Class css_class, Id id, Style style);
         /** Copy constructor
 
-            Deleted. Operate on pointers instead.
+            Creates a copy of a given element including copies of the children
+            elements, but not the parent element (this copy will have no parent).
 
             @param other Object to copy from
          */
-        Element(const Element& other) = delete;
+        Element(const Element& other);
         /** Assignment operator
 
-            Deleted. Operate on pointers instead.
+            Copies values of given elements member variables including copies of
+            the children elements, but not the parent element
+            (this will have no parent).
 
             @param other Object to assign from
             @return A reference to this
          */
-        Element& operator=(const Element& other) = delete;
-        /** Destroying deallocation operator
-
-            Enables using destructor during deletion of heap-allocated objects.
-
-            @param element Pointer to this object.
-        */
-        void operator delete(Element* element, std::destroying_delete_t);
+        Element& operator=(const Element& other);
+        /** Default destructor */
+        ~Element() = default;
 
         //Getters
+        /** Get copy of this element
+
+            @return Object created with copy contructor based on this element.
+        */
+        Element                 Copy();
+        /** Check if this element is empty
+
+            @return True if this element has no name, text, attributes
+            and children.
+        */
+        bool                    Empty();
         /** Get tag name of this element
             @return Tag name of this element
             or an empty string if name has not been set.
@@ -118,41 +112,88 @@ class Element
         */
         Element*                GetParent();
         /** Get 'class' attribute of this element
-            @return Pointer to a Class object matching this elements css class
-            or nullptr if this element has no class attribute.
+
+            Get Class object of this element. If class for this element
+            has not been set, returns an empty Class object (with no value).
+
+            @return Class object matching this elements css class.
         */
-        Class*                  GetClass();
+        Class                   GetClass();
         /** Get 'id' attribute of this element
-            @return Pointer to an Id object matching this elements id
-            or nullptr if this element has no id attribute.
+
+            Get Id object of this element. If id for this element
+            has not been set, returns an empty Id object (with no value).
+
+            @return Id object matching this elements id.
         */
-        Id*                     GetId();
+        Id                      GetId();
         /** Get 'style' attribute of this element
-            @return Pointer to a Style object matching this elements styles
-            or nullptr if this element has no style attribute.
+
+            Get Style object of this element. If style for this element
+            has not been set, returns an empty Style object (with no value).
+
+            @return Style object matching this elements css style.
         */
-        Style*                  GetStyle();
+        Style                   GetStyle();
         /** Get children of this element
+            @return Vector containing copies of all children of this element
+            or an empty vector if this element has no children.
+        */
+        std::vector<Element>   GetChildren();
+        /** Get pointers to the children of this element
+
+            Get pointers to every children of this element. Remember that any
+            action resulting in resizing/rearranging of this elements children
+            vector may invalidate those pointers. Use with caution.
+
             @return Vector containing pointers to all children of this element
             or an empty vector if this element has no children.
         */
-        std::vector<Element*>   GetChildren();
+        std::vector<Element*>   GetChildrenPtr();
         /** Get children of this element by tag name.
 
-            Finds and returns every child matching given name.
+            Finds and returns copy of every child matching given name.
             The search is case sensitive.
 
             @param name Name of the child to find.
-            @return Vector containing pointers to all children
-            of this element matching given name
+            @return Vector containing copies of all children
+            of this element matching given tag name
             or an empty vector if this element has no children
             matching given name.
         */
-        std::vector<Element*>   GetChildrenByTagName(std::string name);
+        std::vector<Element>   GetChildrenByTagName(std::string name);
+        /** Get children of this element by tag name.
+
+            Finds and returns pointers to every child matching given name.
+            The search is case sensitive. Remember that any
+            action resulting in resizing/rearranging of this elements children
+            vector may invalidate those pointers. Use with caution.
+
+            @param name Name of the child to find.
+            @return Vector containing pointers to all children
+             of this element matching given tag name
+            or an empty vector if this element has no children
+            matching given name.
+        */
+        std::vector<Element*>   GetChildrenPtrByTagName(std::string name);
         /** Get children of this element by class name.
 
-            Finds and returns every child matching given css class.
+            Finds and returns copies of every child matching given css class.
             The search is case sensitive.
+
+            @param name Class to find children by.
+            @return Vector containing copies of all children
+            of this element matching given class name
+            or an empty vector if this element has no children
+            matching given class name.
+        */
+        std::vector<Element>   GetChildrenByClassName(std::string name);
+        /** Get children of this element by class name.
+
+            Finds and returns pointers to every child matching given css class.
+            The search is case sensitive. Remember that any
+            action resulting in resizing/rearranging of this elements children
+            vector may invalidate those pointers. Use with caution.
 
             @param name Class to find children by.
             @return Vector containing pointers to all children
@@ -160,11 +201,25 @@ class Element
             or an empty vector if this element has no children
             matching given class name.
         */
-        std::vector<Element*>   GetChildrenByClassName(std::string name);
+        std::vector<Element*>   GetChildrenPtrByClassName(std::string name);
         /** Get children of this element by id.
 
-            Finds and returns every child matching given id.
+            Finds and returns copies of every child matching given id.
             The search is case sensitive.
+
+            @param id Id to check children for.
+            @return Vector containing copies of all children
+            of this element matching given id
+            or an empty vector if this element has no children
+            matching given id.
+        */
+        std::vector<Element>   GetChildrenById(std::string id);
+        /** Get children of this element by id.
+
+            Finds and returns pointers to every child matching given id.
+            The search is case sensitive. Remember that any
+            action resulting in resizing/rearranging of this elements children
+            vector may invalidate those pointers. Use with caution.
 
             @param id Id to check children for.
             @return Vector containing pointers to all children
@@ -172,28 +227,45 @@ class Element
             or an empty vector if this element has no children
             matching given id.
         */
-        std::vector<Element*>   GetChildrenById(std::string id);
+        std::vector<Element*>   GetChildrenPtrById(std::string id);
+        /** Get first child of this element
+            @return Copy of the first child or an empty element
+            if this element has no children.
+        */
+        Element                 GetFirstChild();
         /** Get first child of this element
             @return Pointer to the first child or nullptr
             if this element has no children.
         */
-        Element*                GetFirstChild();
+        Element*                GetFirstChildPtr();
+        /** Get copy of the child at a given position
+            @param position Position of the child.
+            @return Copy of the child at a requested position
+            or an empty element if number of children this element has is
+            smaller or equal to the requested position.
+        */
+        Element                 GetChildAt(unsigned int position);
         /** Get pointer to a child at a given position
             @param position Position of the child.
             @return Pointer to child at requested position
             or nullptr if number of children this element has is
             smaller or equal to the requested position.
         */
-        Element*                GetChildAt(unsigned int position);
+        Element*                GetChildPtrAt(unsigned int position);
+        /** Get copy of the last child of this element
+            @return Copy of the last child or an empty element
+            if this element has no children.
+        */
+        Element                 GetLastChild();
         /** Get pointer to the last child of this element
             @return Pointer to the last child or nullptr
             if this element has no children.
         */
-        Element*                GetLastChild();
+        Element*                GetLastChildPtr();
         /** Get number of children this element has.
             @return Number of children this element has.
         */
-        unsigned int            GetChildrenCount();
+        size_t                  GetChildrenCount();
         /** Get all attributes of this element
             @return Vector containing all of this elements attributes
             (class, id and style included). Empty vector if this element
@@ -201,10 +273,11 @@ class Element
         */
         std::vector<Attribute>  GetAttributes();
         /** Get this elements attribute by name
-            @return Pointer to an Attribute object containing attribute matching
-            given name or nullptr if a matching attribute has not been found.
+            @return An Attribute object containing attribute matching
+            given name or an empty attribute if a matching attribute
+            has not been found.
         */
-        Attribute*              GetAttributeByName(std::string name);
+        Attribute               GetAttributeByName(std::string name);
 
 
         //Setters
@@ -224,26 +297,6 @@ class Element
             @param text Text to add.
         */
         void                    AddText(std::string text);
-        /** Set new parent element for this element
-
-            Sets given element as a parent to this element.
-            This element receives a pointer to the given element
-            and the given element receives pointer to this element as a child.
-            This element is added as the new parents last child.
-            If this element already had a parent, then the preious parent
-            will lose a pointer to this element.
-            If this child already is a part of the new parents children vector
-            then it's not added a second time.
-
-            @param parent Pointer to an existing element to set as a parent.
-        */
-        void                    SetParent(Element* parent);
-        /** Remove parent from this element
-
-            Removes a pointer to the parent element from this.
-            Parents pointer to this element is also removed.
-        */
-        void                    RemoveParent();
         /** Set new css class attribute for this element
             @param newClass Class attribute to set.
         */
@@ -258,18 +311,12 @@ class Element
         void                    SetStyle(Style style);
 
         /** Remove all children of this element
-
-            Removes all children elements. This will not delete children
-            elements objects, only connections between this element and
-            children elements (this children pointers and every childs
-            parent pointer.
         */
         void                    RemoveChildren();
         /** Remove child element at a given position
 
-            Removes child (a pointer) from this elements children vector.
-            Does not delete childs element object, but remove childs parent
-            pointer. If given position is invalid (is greater or
+            Removes child from this elements children vector.
+            If given position is invalid (is greater or
             equal to vectors size) nothing happens.
 
             @param position Position of the child in this elements children
@@ -280,47 +327,35 @@ class Element
         /** Add child element to this element
 
             Adds child at the end of this elements children vector.
-            If a given pointer equals nullptr it won't be added.
-            If a given child is already a child of this element
-            it won't be added.
-            The child will receive a pointer to this as parent
-            and any connection from the child to the previous parent
-            will be removed.
+            The child is given a pointer to this element as it's parent.
 
-            @param child Pointer to a child element to add.
+            @param child Child element to add.
         */
-        void                    AddChild(Element* child);
+        void                    AddChild(Element child);
         /** Add child to this element at a given position
 
             Adds child before an element at a given position in this
             elements children vector. If a given pointer equals nullptr
             it won't be added. If given position is invalid
             (is greater or equal to vectors size) nothing happens.
-            If a given child is already a child of this element
-            it won't be added.
-            The child will receive a pointer to this as parent
-            and any connection from the child to the previous parent
-            will be removed.
+            The child will receive a pointer to this as it's parent.
 
             @param child Pointer to a child element to add.
             @param position Position to add a child at in this elements children
             vector. This corresponds with top to bottom order in html code.
             Indexing is zero-based.
         */
-        void                    AddChildAt(Element* child,
+        void                    AddChildAt(Element child,
                                            unsigned int position);
         /** Add children from a given vector
 
             Adds children from a given vector to the end of this elements
             children vector. Every child also receives a pointer to this
-            element as parent. If any child in a given vector already has
-            a parent (including this element as parent), then every connection
-            to that parent will be removed first.
+            element as parent.
 
-            @param children Vector of pointers to the Element objects of
-            children to add.
+            @param children Vector of the Element objects to add as children.
         */
-        void                    AddChildren(std::vector<Element*> children);
+        void                    AddChildren(std::vector<Element> children);
 
         /** Remove all attributes from this element */
         void                    RemoveAttributes();
@@ -343,12 +378,12 @@ class Element
     protected:
         std::string             name_;
         std::string             text_;
-        std::vector<Element*>   children_;
+        std::vector<Element>    children_;
         Element*                parent_;
         std::vector<Attribute>  attributes_;
-        Class*                  class_;
-        Id*                     id_;
-        Style*                  style_;
+        Class                   class_;
+        Id                      id_;
+        Style                   style_;
 
         /** Initializes member variables and sets them to default values
 
@@ -358,20 +393,11 @@ class Element
             children_   -   empty vector
             parent_     -   nullptr
             attributes_ -   empty vector
-            class_      -   nullptr
-            id_         -   nullptr
-            style_      -   nullptr
+            class_      -   empty class
+            id_         -   empty id
+            style_      -   empty style
         */
         void                    SetDefaultValues();
-
-    private:
-        /** Private destructor
-
-            It prevents stack allocation - Element object should only be
-            initialized using 'new' operator.
-        */
-        ~Element() = default;
-
 };
 }
 

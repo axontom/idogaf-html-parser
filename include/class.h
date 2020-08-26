@@ -12,7 +12,10 @@ namespace idogaf
 class Class : public Attribute
 {
     public:
-        /** Default constructor */
+        /** Default constructor
+
+            Creates an object with no value.
+        */
         Class();
         /** Attribute-based constuctor
 
