@@ -19,7 +19,7 @@ Style::Style(const Style& other)
 Style::Style(const Attribute& attribute)
 {
     name_ = Style::GetStaticName();
-    value_ = "";
+    value_ = attribute.GetValue();
     styles_ = std::vector<DStringPair>();
     ParseStringForStyles(attribute.GetValue());
 
@@ -31,6 +31,7 @@ Style& Style::operator=(const Style& rhs)
     //assignment operator
     name_ = Style::GetStaticName();
     value_ = rhs.value_;
+    styles_ = rhs.styles_;
     return *this;
 }
 

@@ -68,7 +68,8 @@ bool Parser::Parse(std::istream& stream)
     {
         return UnexpectedTagError(root.GetName());
     }
-    A = &root;
+    document_.SetRoot(root);
+    A = document_.GetRootPtr();
     while(true)
     {
         B = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
@@ -123,7 +124,7 @@ bool Parser::WriteToStream(std::ostream& stream)
 
     //Print doctype if exists
     if(!document_.GetDoctype().empty())
-        stream << "<!DOCTYPE " << document_.GetDoctype() << " >\n";
+        stream << "<!DOCTYPE " << document_.GetDoctype() << ">\n";
     if(root.Empty()) return true;
 
     std::stack<unsigned int> uiStack;
@@ -236,7 +237,8 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             buffer.str("");
             while(stream.good())
             {
-                stream.get(buffer, '<');
+                if(stream.peek() != '<')
+                    stream.get(buffer, '<');
                 if(stream.peek() == '\n')
                 {
                     buffer.sputc('\n');
@@ -244,12 +246,12 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                     continue;
                 }
                 std::string buf = " ";
-                for(int i = 1; i < 15 && buf[i-1] != '>';i++)
+                for(int i = 1; i < 15 && buf[i-1] != '>' && stream.good();i++)
                     buf += static_cast<char>(stream.get());
                 if(trim(buf.substr(3,buf.length()-3-1)) == "script") break;
                 else buffer.sputn(buf.c_str(),buf.length());
             }
-            ret.AddText(buffer.str());
+            ret.AddText(trim(buffer.str()));
             emptyOut = true;
             return ret;
         }
@@ -271,6 +273,8 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         }
         else    //Opening tag
         {
+            if(activeBuffer.substr(0,5) == "<link"
+                || activeBuffer.substr(0,5) == "<meta") emptyOut = true;
             //Extract anything between '<' and '>'
             activeBuffer = activeBuffer.substr(1, activeBuffer.length()-1-1);
             //Parse active buffer for name and attributes
@@ -299,6 +303,13 @@ Element Parser::ParseTagForElement(const std::string& tag)
     while(sstream.good())
     {
         sstream >> buffer;
+        while(sstream.good() && buffer[buffer.length()-1] != '"')
+        {   //handle artibutes with spaces in value
+            std::string buffer2;
+            sstream >> buffer2;
+            buffer += ' ';
+            buffer += buffer2;
+        }
         ret.AddAtrribute(ParseStringForAttribute(buffer));
     }
     return ret;
@@ -319,18 +330,32 @@ void Parser::WriteOpeningTag(Element* element, std::ostream& stream,
 {
     if(element == nullptr) return;
 
-    stream << GetIndentation(indent) << '<' << element->GetName() << ' ';
+    stream << GetIndentation(indent) << '<' << element->GetName();
 
     std::vector<Attribute> attributes = element->GetAttributes();
 
     for(auto it = attributes.begin();it != attributes.end();++it)
-        stream << it->GetName() << "=\"" << it->GetValue() << "\" ";
-    if(element->GetChildrenCount() == 0 && element->GetText().empty())
+        stream << ' ' << it->GetName() << "=\"" << it->GetValue() << "\"";
+    if(element->GetChildrenCount() == 0 && element->GetText().empty()
+       && element->GetName() != "meta" && element->GetName() != "link"
+       && element->GetName() != "script")
         stream << "/>\n";
     else if(element->GetChildrenCount() == 0 && !element->GetText().empty())
     {
-        stream << ">\n" << GetIndentation(indent) << element->GetText() << "\n";
+        stream << ">\n" << GetIndentation(indent+1);
+        std::string text = element->GetText();
+        for(size_t i = 0; i < text.length();i++)
+        {
+            stream << text[i];
+            if(text[i] == '\n') stream << GetIndentation(indent+1);
+        }
+        stream << '\n';
         WriteClosingTag(element, stream, indent);
+    }
+    else if(element->GetName() == "script")
+    {
+        stream << '>';
+        WriteClosingTag(element, stream, 0);
     }
     else
         stream << ">\n";

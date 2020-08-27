@@ -46,6 +46,9 @@ Class& Class::operator=(const Class& rhs)
 {
     if (this == &rhs) return *this; // handle self assignment
     //assignment operator
+    name_ = Class::GetStaticName();
+    value_ = rhs.value_;
+    classes_ = rhs.classes_;
     return *this;
 }
 
