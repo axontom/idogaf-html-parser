@@ -9,6 +9,13 @@ Style::Style() : Attribute()
     styles_ = std::vector<DStringPair>();
 }
 
+Style::Style(const Style& other)
+{
+    name_ = Style::GetStaticName();
+    value_ = other.value_;
+    styles_ = other.styles_;
+}
+
 Style::Style(const Attribute& attribute)
 {
     name_ = Style::GetStaticName();
