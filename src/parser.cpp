@@ -103,7 +103,6 @@ bool Parser::Parse(std::istream& stream)
     }
 }
 
-/* Temporary removed until next update. Needs to be redone.
 bool Parser::WriteToFile(const std::string& filename)
 {
     std::ofstream file;
@@ -115,12 +114,17 @@ bool Parser::WriteToFile(const std::string& filename)
 
 bool Parser::WriteToStream(std::ostream& stream)
 {
-    Element* current = document_.GetRoot();
-    if(current == nullptr) return false;
+    if(document_.Empty()) return DocumentEmptyError();
+    //Create copy of the root so, we can use pointers during writing
+    //without caring if someone modifies it during our work,
+    //posibly invalidating our pointers.
+    Element root = document_.GetRoot();
+    Element* current = &root;
 
     //Print doctype if exists
     if(!document_.GetDoctype().empty())
         stream << "<!DOCTYPE " << document_.GetDoctype() << " >\n";
+    if(root.Empty()) return true;
 
     std::stack<unsigned int> uiStack;
     unsigned int curSiblingPos = 0;
@@ -133,7 +137,7 @@ bool Parser::WriteToStream(std::ostream& stream)
         if(current->GetChildrenCount() > 0)
         {
             uiStack.push(curSiblingPos);
-            current = current->GetFirstChild();
+            current = current->GetFirstChildPtr();
             curSiblingPos = 0;
             indent++;
         }
@@ -147,9 +151,9 @@ bool Parser::WriteToStream(std::ostream& stream)
                     running = false;
                     break;
                 }
-                else if(current->GetParent()->GetChildAt(++curSiblingPos) != nullptr)
+                else if(current->GetParent()->GetChildrenCount() > ++curSiblingPos)
                 {
-                    current = current->GetParent()->GetChildAt(curSiblingPos);
+                    current = current->GetParent()->GetChildPtrAt(curSiblingPos);
                     break;
                 }
                 else
@@ -164,7 +168,7 @@ bool Parser::WriteToStream(std::ostream& stream)
         }
     }
     return true;
-}*/
+}
 
 //Protected member functions
 Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
@@ -353,9 +357,16 @@ bool Parser::UnexpectedTagError(std::string tagName)
 {
     if(!silent_)
     {
-        std::cerr << "Unexpected tag " << tagName << std::endl;
+        std::cerr << "Error: Unexpected tag " << tagName << std::endl;
         std::cerr << "Document is probably ill formed.\n";
     }
+    return false;
+}
+
+bool Parser::DocumentEmptyError()
+{
+    if(!silent_)
+        std::cerr << "Error: Document is empty." << std::endl;
     return false;
 }
 

@@ -79,15 +79,13 @@ class Parser
             @param filename Name of the output file.
             @return True on success, False otherwise.
         */
-        //Temporary removed until next update. Needs to be redone.
-        //bool        WriteToFile(const std::string& filename);
+        bool        WriteToFile(const std::string& filename);
         /** Write current Document object to stream
 
             @param stream Output stream to write to.
             @return True on success, False otherwise.
         */
-        //Temporary removed until next update. Needs to be redone.
-        //bool        WriteToStream(std::ostream& stream);
+        bool        WriteToStream(std::ostream& stream);
 
     protected:
         bool        silent_;
@@ -195,12 +193,20 @@ class Parser
         /** End with unexpected tag error
 
             Prints unexpected tag error message, if parser doesn't run in
-            silen mode.
+            silent mode.
 
             @param tagName Name of the unexpected tag.
             @return Always false.
         */
         bool UnexpectedTagError(std::string tagName);
+        /** End with document empty error
+
+            Prints document empty error message, if parser doesn't run in
+            silent mode.
+
+            @return Always false.
+        */
+        bool DocumentEmptyError();
 
     private:
 };

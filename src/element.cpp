@@ -1,5 +1,4 @@
 #include "element.h"
-#include "manager.h"
 
 namespace idogaf
 {
