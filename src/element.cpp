@@ -1,4 +1,5 @@
 #include "element.h"
+#include "search.h"
 
 namespace idogaf
 {
@@ -222,7 +223,30 @@ Attribute Element::GetAttributeByName(std::string name)
     }
     return Attribute();
 }
-
+bool Element::HasRightBrother()
+{
+    if(parent_ == nullptr) return false;
+    for(size_t i = 0; i < parent_->GetChildrenCount();i++)
+    {
+        if(parent_->GetChildPtrAt(i) == this)
+            return i+1 < parent_->GetChildrenCount();
+    }
+    return false;
+}
+Element* Element::GetRightBrotherPtr()
+{
+    if(parent_ == nullptr) return nullptr;
+    for(size_t i = 0; i < parent_->GetChildrenCount();i++)
+    {
+        if(parent_->GetChildPtrAt(i) == this)
+        {
+            if(i+1 < parent_->GetChildrenCount())
+                return parent_->GetChildPtrAt(i+1);
+            else break;
+        }
+    }
+    return nullptr;
+}
 //Setters
 void Element::SetName(std::string name) { name_ = name; }
 void Element::SetText(std::string text) { text_ = text; }
@@ -321,6 +345,16 @@ void Element::AddAtrribute(Attribute attribute)
     }
 
     attributes_.push_back(attribute);
+}
+
+std::vector<Element> Element::Find(std::string query)
+{
+    return Search::Find(*this, query);
+}
+
+std::vector<Element*> Element::FindPtr(std::string query)
+{
+    return Search::FindPtr(this, query);
 }
 
 

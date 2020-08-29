@@ -278,7 +278,16 @@ class Element
             has not been found.
         */
         Attribute               GetAttributeByName(std::string name);
+        /** Check if this element has brother on the right
+            @return True if it has right brother, false otherwise.
+        */
+        bool                    HasRightBrother();
+        /** Get this elements right brother
 
+            @return Pointer to it's right brother or nullptr if it has no
+            brother on the right side.
+        */
+        Element*                GetRightBrotherPtr();
 
         //Setters
 
@@ -373,6 +382,41 @@ class Element
             @param attribute Attribute to add
         */
         void                    AddAtrribute(Attribute attribute);
+
+        //Other
+        /** Find elements in a tree starting from this element.
+
+            This function uses CSS selectors to search for elements
+            in a tree starting from this element. Pseudo-classes and
+            pseudo-elements are not supported right now. If a query matches
+            an element twice (i.e. "div, .xxx" matches <div class="xxx">)
+            then it will be included only once in a result vector
+            (it won't be duplicated).
+
+            @param query CSS selector query.
+            @return Vector containg every element matching given query.
+        */
+        std::vector<Element>   Find(std::string query);
+        /** Find elements in a tree
+
+            This function uses CSS selectors to search for elements
+            in a tree starting from this element. Pseudo-classes and
+            pseudo-elements are not supported right now.
+            If a query matches an element twice
+            (i.e. "div, .xxx" matches <div class="xxx">) then it will
+            be included only once in a result vector (it won't be duplicated).
+            Warning: Due to operating on pointers, if during this function
+            execution the tree is modified (possibly resulting in the
+            invalidation of some pointers), the result of the function is
+            undefined and possibility of a segmentation fault exists.
+            Warning: Currently this will also search in this elements right
+            siblings and it's ancestors right siblings and their children.
+            Use Find() for stable results.
+
+            @param query CSS selector query.
+            @return Vector containg pointers to the elements matching given query.
+        */
+        std::vector<Element*> FindPtr(std::string query);
 
 
     protected:
