@@ -1,22 +1,23 @@
+#include "parser.h"
+
 #include <ctype.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stack>
+
 #include "misc.h"
-#include "parser.h"
 
 namespace idogaf
 {
+
 Parser::Parser()
 {
-    //ctor
     silent_ = false;
 }
 
 Parser::Parser(const Parser& other)
 {
-    //copy ctor
     silent_ = other.silent_;
     document_ = other.document_;
 }
@@ -31,12 +32,24 @@ Parser& Parser::operator=(const Parser& rhs)
 }
 
 //Getters
-Document Parser::GetDocument() { return document_; }
-Document* Parser::GetDocumentPtr() { return &document_; }
-bool Parser::Silent() { return silent_; }
+Document Parser::GetDocument()
+{
+    return document_;
+}
+Document* Parser::GetDocumentPtr()
+{
+    return &document_;
+}
+bool Parser::Silent()
+{
+    return silent_;
+}
 
 //Setters
-void Parser::Silent(bool silent) { silent_ = silent; }
+void Parser::Silent(bool silent)
+{
+    silent_ = silent;
+}
 
 //Other
 bool Parser::Parse(const std::string& filename)
@@ -173,7 +186,7 @@ bool Parser::WriteToStream(std::ostream& stream)
 
 //Protected member functions
 Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
-                             bool& closeOut, std::string& textOut)
+                            bool& closeOut, std::string& textOut)
 {
     emptyOut = false;
     closeOut = false;
@@ -190,7 +203,10 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         {
             stream.get(buffer, '<');
             if(stream.peek() == '\n') buffer.sputc('\n');
-            while(stream.peek() == '\n') { stream.get(); }
+            while(stream.peek() == '\n')
+            {
+                stream.get();
+            }
         }
         textOut += trim(buffer.str());
         //Here in next char in stream is '<' (next tag ready to extract).
@@ -203,13 +219,17 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         {
             stream.get(buffer, '>');
             if(stream.peek() == '\n') buffer.sputc(' ');
-            while(stream.peek() == '\n') { stream.get(); }
+            while(stream.peek() == '\n')
+            {
+                stream.get();
+            }
         }
         buffer.sputc(stream.get());   //extract '>' into buffer
         activeBuffer = buffer.str();
 
         if(activeBuffer.substr(0,4) == "<!--")  //Comment tag
-        {   //Ignore comments for now
+        {
+            //Ignore comments for now
             //Just add new line to the text
             textOut += '\n';
         }
@@ -246,7 +266,7 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                     continue;
                 }
                 std::string buf = " ";
-                for(int i = 1; i < 15 && buf[i-1] != '>' && stream.good();i++)
+                for(int i = 1; i < 15 && buf[i-1] != '>' && stream.good(); i++)
                     buf += static_cast<char>(stream.get());
                 if(trim(buf.substr(3,buf.length()-3-1)) == "script") break;
                 else buffer.sputn(buf.c_str(),buf.length());
@@ -274,7 +294,7 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         else    //Opening tag
         {
             if(activeBuffer.substr(0,5) == "<link"
-                || activeBuffer.substr(0,5) == "<meta") emptyOut = true;
+                    || activeBuffer.substr(0,5) == "<meta") emptyOut = true;
             //Extract anything between '<' and '>'
             activeBuffer = activeBuffer.substr(1, activeBuffer.length()-1-1);
             //Parse active buffer for name and attributes
@@ -288,9 +308,11 @@ Element Parser::ParseTagForElement(const std::string& tag)
 {
     std::stringstream sstream(tag);
     std::string buffer;
-    try{
+    try
+    {
         sstream >> buffer;
-    } catch(const std::ios_base::failure& e)
+    }
+    catch(const std::ios_base::failure& e)
     {
         if(!silent_)
         {
@@ -304,7 +326,8 @@ Element Parser::ParseTagForElement(const std::string& tag)
     {
         sstream >> buffer;
         while(sstream.good() && buffer[buffer.length()-1] != '"')
-        {   //handle artibutes with spaces in value
+        {
+            //handle artibutes with spaces in value
             std::string buffer2;
             sstream >> buffer2;
             buffer += ' ';
@@ -332,19 +355,19 @@ void Parser::WriteOpeningTag(Element* element, std::ostream& stream,
 
     stream << GetIndentation(indent) << '<' << element->GetName();
 
-    std::vector<Attribute> attributes = element->GetAttributes();
+    Vector_A attributes = element->GetAttributes();
 
-    for(auto it = attributes.begin();it != attributes.end();++it)
+    for(Vector_A_it it = attributes.begin(); it != attributes.end(); ++it)
         stream << ' ' << it->GetName() << "=\"" << it->GetValue() << "\"";
     if(element->GetChildrenCount() == 0 && element->GetText().empty()
-       && element->GetName() != "meta" && element->GetName() != "link"
-       && element->GetName() != "script")
+            && element->GetName() != "meta" && element->GetName() != "link"
+            && element->GetName() != "script")
         stream << "/>\n";
     else if(element->GetChildrenCount() == 0 && !element->GetText().empty())
     {
         stream << ">\n" << GetIndentation(indent+1);
         std::string text = element->GetText();
-        for(size_t i = 0; i < text.length();i++)
+        for(size_t i = 0; i < text.length(); i++)
         {
             stream << text[i];
             if(text[i] == '\n') stream << GetIndentation(indent+1);
@@ -373,7 +396,7 @@ std::string Parser::GetIndentation(unsigned int level) const
 {
     if(level == 0) return "";
     std::string indentation;
-    for(unsigned int i = 0;i < level;i++)
+    for(unsigned int i = 0; i < level; i++)
         indentation += '\t';
     return indentation;
 }

@@ -1,12 +1,13 @@
 #include "element.h"
+
 #include "search.h"
 
 namespace idogaf
 {
+
 //Constructors
 Element::Element()
 {
-    //ctor
     SetDefaultValues();
 }
 
@@ -16,15 +17,15 @@ Element::Element(std::string name)
     name_ = name;
 }
 
-Element::Element(std::string name, std::string text,
-    std::vector<Element> children, std::vector<Attribute> attributes)
+Element::Element(std::string name, std::string text, Vector_E children,
+                 Vector_A attributes)
 {
     name_ = name;
     text_ = text;
     children_ = children;
-    for(auto it = children_.begin();it != children_.end();++it)
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
         it->parent_ = this;
-    attributes_ = std::vector<Attribute>();
+    attributes_ = Vector_A();
     for(size_t i = 0; i < attributes.size(); i++)
     {
         if(attributes[i].GetName() == "class")
@@ -47,13 +48,13 @@ Element::Element(std::string name, std::string text,
     parent_ = nullptr;
 }
 
-Element::Element(std::string name, std::string text,
-                 std::vector<Element> children, Class css_class, Id id, Style style)
+Element::Element(std::string name, std::string text, Vector_E children,
+                 Class css_class, Id id, Style style)
 {
     name_ = name;
     text_ = text;
     children_ = children;
-    for(auto it = children_.begin();it != children_.end();++it)
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
         it->parent_ = this;
     class_ = css_class;
     id_ = id;
@@ -63,11 +64,10 @@ Element::Element(std::string name, std::string text,
 
 Element::Element(const Element& other)
 {
-    //copy ctor
     name_ = other.name_;
     text_ = other.text_;
     children_ = other.children_;
-    for(auto it = children_.begin();it != children_.end();++it)
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
         it->parent_ = this;
     parent_ = nullptr;
     attributes_ = other.attributes_;
@@ -83,7 +83,7 @@ Element& Element::operator=(const Element& rhs)
     name_ = rhs.name_;
     text_ = rhs.text_;
     children_ = rhs.children_;
-    for(auto it = children_.begin();it != children_.end();++it)
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
         it->parent_ = this;
     parent_ = nullptr;
     attributes_ = rhs.attributes_;
@@ -96,81 +96,105 @@ Element& Element::operator=(const Element& rhs)
 //Public member fuctions
 
 //Getters
-Element Element::Copy() { return Element(*this); }
+Element Element::Copy()
+{
+    return Element(*this);
+}
 bool Element::Empty()
 {
     return name_.empty() && text_.empty() && attributes_.empty()
-        && children_.empty() && class_.GetValue().empty()
-        && id_.GetValue().empty() && style_.GetValue().empty();
+           && children_.empty() && class_.GetValue().empty()
+           && id_.GetValue().empty() && style_.GetValue().empty();
 }
-std::string Element::GetName() { return name_; }
-std::string Element::GetText() { return text_; }
-Element* Element::GetParent() { return parent_; }
-Class Element::GetClass() { return class_; }
-Id Element::GetId() { return id_; }
-Style Element::GetStyle() { return style_; }
-std::vector<Element> Element::GetChildren() { return children_; }
-std::vector<Element*> Element::GetChildrenPtr()
+std::string Element::GetName()
 {
-    std::vector<Element*> pointers;
-    for(auto it = children_.begin();it != children_.end();++it)
+    return name_;
+}
+std::string Element::GetText()
+{
+    return text_;
+}
+Element* Element::GetParent()
+{
+    return parent_;
+}
+Class Element::GetClass()
+{
+    return class_;
+}
+Id Element::GetId()
+{
+    return id_;
+}
+Style Element::GetStyle()
+{
+    return style_;
+}
+Vector_E Element::GetChildren()
+{
+    return children_;
+}
+Vector_P Element::GetChildrenPtr()
+{
+    Vector_P pointers;
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
         pointers.push_back(&(*it));
     return pointers;
 }
-std::vector<Element> Element::GetChildrenByTagName(std::string name)
+Vector_E Element::GetChildrenByTagName(std::string name)
 {
-    std::vector<Element> result;
-    for(auto it = children_.begin();it != children_.end();++it)
+    Vector_E result;
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
     {
         if(it->GetName() == name)
             result.push_back(*it);
     }
     return result;
 }
-std::vector<Element*> Element::GetChildrenPtrByTagName(std::string name)
+Vector_P Element::GetChildrenPtrByTagName(std::string name)
 {
-    std::vector<Element*> result;
-    for(auto it = children_.begin();it != children_.end();++it)
+    Vector_P result;
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
     {
         if(it->GetName() == name)
             result.push_back(&(*it));
     }
     return result;
 }
-std::vector<Element> Element::GetChildrenByClassName(std::string name)
+Vector_E Element::GetChildrenByClassName(std::string name)
 {
-    std::vector<Element> result;
-    for(auto it = children_.begin();it != children_.end();++it)
+    Vector_E result;
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
     {
         if(it->GetClass().Matches(name))
             result.push_back(*it);
     }
     return result;
 }
-std::vector<Element*> Element::GetChildrenPtrByClassName(std::string name)
+Vector_P Element::GetChildrenPtrByClassName(std::string name)
 {
-    std::vector<Element*> result;
-    for(auto it = children_.begin();it != children_.end();++it)
+    Vector_P result;
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
     {
         if(it->GetClass().Matches(name))
             result.push_back(&(*it));
     }
     return result;
 }
-std::vector<Element> Element::GetChildrenById(std::string id)
+Vector_E Element::GetChildrenById(std::string id)
 {
-    std::vector<Element> result;
-    for(auto it = children_.begin();it != children_.end();++it)
+    Vector_E result;
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
     {
         if(it->GetId().GetValue() == id)
             result.push_back(*it);
     }
     return result;
 }
-std::vector<Element*> Element::GetChildrenPtrById(std::string id)
+Vector_P Element::GetChildrenPtrById(std::string id)
 {
-    std::vector<Element*> result = std::vector<Element*>();
-    for(auto it = children_.begin();it != children_.end();++it)
+    Vector_P result = Vector_P();
+    for(Vector_E_it it = children_.begin(); it != children_.end(); ++it)
     {
         if(it->GetId().GetValue() == id)
             result.push_back(&(*it));
@@ -201,10 +225,13 @@ Element* Element::GetLastChildPtr()
 {
     return children_.size() > 0 ? &(*(children_.end()-1)) : nullptr;
 }
-size_t Element::GetChildrenCount() { return children_.size(); }
-std::vector<Attribute> Element::GetAttributes()
+size_t Element::GetChildrenCount()
 {
-    std::vector<Attribute> result = attributes_;
+    return children_.size();
+}
+Vector_A Element::GetAttributes()
+{
+    Vector_A result = attributes_;
     if(!style_.GetValue().empty()) result.insert(result.begin(), style_);
     if(!class_.GetValue().empty()) result.insert(result.begin(), class_);
     if(!id_.GetValue().empty()) result.insert(result.begin(), id_);
@@ -217,7 +244,7 @@ Attribute Element::GetAttributeByName(std::string name)
     if(name == Id::GetStaticName()) return id_;
     if(name == Style::GetStaticName()) return style_;
 
-    for(auto it = attributes_.begin();it != attributes_.end();++it)
+    for(Vector_A_it it = attributes_.begin(); it != attributes_.end(); ++it)
     {
         if(it->GetName() == name) return *it;
     }
@@ -226,7 +253,7 @@ Attribute Element::GetAttributeByName(std::string name)
 bool Element::HasRightBrother()
 {
     if(parent_ == nullptr) return false;
-    for(size_t i = 0; i < parent_->GetChildrenCount();i++)
+    for(size_t i = 0; i < parent_->GetChildrenCount(); i++)
     {
         if(parent_->GetChildPtrAt(i) == this)
             return i+1 < parent_->GetChildrenCount();
@@ -236,7 +263,7 @@ bool Element::HasRightBrother()
 Element* Element::GetRightBrotherPtr()
 {
     if(parent_ == nullptr) return nullptr;
-    for(size_t i = 0; i < parent_->GetChildrenCount();i++)
+    for(size_t i = 0; i < parent_->GetChildrenCount(); i++)
     {
         if(parent_->GetChildPtrAt(i) == this)
         {
@@ -248,12 +275,30 @@ Element* Element::GetRightBrotherPtr()
     return nullptr;
 }
 //Setters
-void Element::SetName(std::string name) { name_ = name; }
-void Element::SetText(std::string text) { text_ = text; }
-void Element::AddText(std::string text) { text_ += text; }
-void Element::SetClass(Class newClass) { class_ = newClass; }
-void Element::SetId(Id id) { id_ = id; }
-void Element::SetStyle(Style style) { style_ = style; }
+void Element::SetName(std::string name)
+{
+    name_ = name;
+}
+void Element::SetText(std::string text)
+{
+    text_ = text;
+}
+void Element::AddText(std::string text)
+{
+    text_ += text;
+}
+void Element::SetClass(Class newClass)
+{
+    class_ = newClass;
+}
+void Element::SetId(Id id)
+{
+    id_ = id;
+}
+void Element::SetStyle(Style style)
+{
+    style_ = style;
+}
 
 void Element::RemoveChildren()
 {
@@ -275,11 +320,11 @@ void Element::AddChildAt(Element child, unsigned int position)
     children_.insert(children_.begin()+position, child);
     children_[position].parent_ = this;
 }
-void Element::AddChildren(std::vector<Element> children)
+void Element::AddChildren(Vector_E children)
 {
     size_t prevSize = children_.size();
     children_.insert(children_.end(), children.begin(), children.end());
-    for(auto it = children_.begin()+prevSize;it != children_.end();++it)
+    for(Vector_E_it it = children_.begin()+prevSize; it != children_.end(); ++it)
         it->parent_ = this;
 }
 
@@ -308,7 +353,7 @@ void Element::RemoveAttributeByName(std::string name)
         return;
     }
 
-    for(auto it = attributes_.begin();it != attributes_.end();++it)
+    for(Vector_A_it it = attributes_.begin(); it != attributes_.end(); ++it)
     {
         if(it->GetName() == name)
         {
@@ -335,7 +380,7 @@ void Element::AddAtrribute(Attribute attribute)
         return;
     }
 
-    for(auto it = attributes_.begin();it != attributes_.end();++it)
+    for(Vector_A_it it = attributes_.begin(); it != attributes_.end(); ++it)
     {
         if(it->GetName() == attribute.GetName())
         {
@@ -347,25 +392,24 @@ void Element::AddAtrribute(Attribute attribute)
     attributes_.push_back(attribute);
 }
 
-std::vector<Element> Element::Find(std::string query)
+Vector_E Element::Find(std::string query)
 {
     return Search::Find(*this, query);
 }
 
-std::vector<Element*> Element::FindPtr(std::string query)
+Vector_P Element::FindPtr(std::string query)
 {
     return Search::FindPtr(this, query);
 }
-
 
 //Protected member functions
 void Element::SetDefaultValues()
 {
     name_       = std::string();
     text_       = std::string();
-    children_   = std::vector<Element>();
+    children_   = Vector_E();
     parent_     = nullptr;
-    attributes_ = std::vector<Attribute>();
+    attributes_ = Vector_A();
     class_      = Class();
     id_         = Id();
     style_      = Style();

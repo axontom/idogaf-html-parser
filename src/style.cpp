@@ -4,7 +4,6 @@ namespace idogaf
 {
 Style::Style() : Attribute()
 {
-    //ctor
     name_ = Style::GetStaticName();
     styles_ = std::vector<DStringPair>();
 }
@@ -35,13 +34,11 @@ Style& Style::operator=(const Style& rhs)
     return *this;
 }
 
-Style::~Style()
-{
-    //dtor
-}
-
 //Getters
-std::string Style::GetStaticName() { return "style"; }
+std::string Style::GetStaticName()
+{
+    return "style";
+}
 
 //Setters
 void Style::SetName(std::string name) {}
@@ -56,7 +53,7 @@ unsigned int Style::ParseStringForStyles(std::string str)
         size_t colonPos = str.find(':');
         size_t semicolonPos = str.find(';');
         if( colonPos == std::string::npos ||
-            semicolonPos == std::string::npos ) break;
+                semicolonPos == std::string::npos ) break;
         buffer.name = str.substr(0, colonPos);
         buffer.value = str.substr(colonPos+1, semicolonPos-colonPos-1);
         styles_.push_back(buffer);

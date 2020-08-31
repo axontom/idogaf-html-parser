@@ -2,9 +2,9 @@
 
 namespace idogaf
 {
+
 Document::Document()
 {
-    //ctor
     root_ = Element();
     doctype_ = std::string();
 }
@@ -12,7 +12,6 @@ Document::Document()
 
 Document::Document(const Document& other)
 {
-    //copy ctor
     root_ = other.root_;
     doctype_ = other.doctype_;
 }
@@ -27,12 +26,31 @@ Document& Document::operator=(const Document& rhs)
 }
 
 //Getters
-std::string Document::GetDoctype() { return doctype_; }
-Element Document::GetRoot() { return root_; }
-Element* Document::GetRootPtr() { return &root_; }
-bool Document::Empty() { return doctype_.empty() && root_.Empty(); }
+std::string Document::GetDoctype()
+{
+    return doctype_;
+}
+Element Document::GetRoot()
+{
+    return root_;
+}
+Element* Document::GetRootPtr()
+{
+    return &root_;
+}
+bool Document::Empty()
+{
+    return doctype_.empty() && root_.Empty();
+}
 
 //Setters
-void Document::SetDoctype(std::string doctype) { doctype_ = doctype; }
-void Document::SetRoot(Element root) { root_ = root; }
+void Document::SetDoctype(std::string doctype)
+{
+    doctype_ = doctype;
+}
+void Document::SetRoot(Element root)
+{
+    root_ = root;
+}
+
 }

@@ -5,14 +5,16 @@
 
 namespace idogaf
 {
-    /** Trim string from both sides
 
-        Remove whitespaces from the begining and the end of the string.
+/** Trim string from both sides
 
-        @param str String to trim.
-        @return Trimmed string.
-    */
-    std::string trim(const std::string& str);
+    Remove whitespaces from the begining and the end of the string.
+
+    @param str String to trim.
+    @return Trimmed string.
+*/
+std::string trim(const std::string& str);
+
 }
 
 #endif // MISC_H_INCLUDED

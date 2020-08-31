@@ -2,20 +2,14 @@
 
 namespace idogaf
 {
+
 Id::Id() : Attribute()
 {
-    //ctor
     name_ = Id::GetStaticName();
-}
-
-Id::~Id()
-{
-    //dtor
 }
 
 Id::Id(const Id& other) : Attribute(other)
 {
-    //copy ctor
     name_ = Id::GetStaticName();
 }
 
@@ -35,8 +29,12 @@ Id& Id::operator=(const Id& rhs)
 }
 
 //Getters
-std::string Id::GetStaticName() { return "id"; }
+std::string Id::GetStaticName()
+{
+    return "id";
+}
 
 //Setters
 void Id::SetName(std::string name) {}
+
 }

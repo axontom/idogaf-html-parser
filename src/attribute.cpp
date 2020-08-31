@@ -2,30 +2,27 @@
 
 namespace idogaf
 {
+
 Attribute::Attribute()
 {
-    //ctor
     name_ = std::string();
     value_ = std::string();
 }
 
 Attribute::Attribute(std::string name)
 {
-    //ctor
     name_ = name;
     value_ = std::string();
 }
 
 Attribute::Attribute(std::string name, std::string value)
 {
-    //ctor
     name_ = name;
     value_ = value;
 }
 
 Attribute::Attribute(const Attribute& other)
 {
-    //copy ctor
     name_ = other.name_;
     value_ = other.value_;
 }
@@ -40,10 +37,23 @@ Attribute& Attribute::operator=(const Attribute& rhs)
 }
 
 //Getters
-std::string Attribute::GetName() const { return name_; }
-std::string Attribute::GetValue() const { return value_; }
+std::string Attribute::GetName() const
+{
+    return name_;
+}
+std::string Attribute::GetValue() const
+{
+    return value_;
+}
 
 //Setters
-void Attribute::SetName(std::string name) { name_ = name; }
-void Attribute::SetValue(std::string value) { value_ = value; }
+void Attribute::SetName(std::string name)
+{
+    name_ = name;
+}
+void Attribute::SetValue(std::string value)
+{
+    value_ = value;
+}
+
 }

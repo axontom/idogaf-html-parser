@@ -10,45 +10,46 @@ namespace idogaf
 {
 class Id : public Attribute
 {
-    public:
-        /** Default constructor
+public:
+    /** Default constructor
 
-            Creates an object with no value.
-        */
-        Id();
-        /** Default destructor */
-        virtual ~Id();
-        /** Copy constructor
-            @param other Object to copy from.
-         */
-        Id(const Id& other);
-        /** Attribute-based constructor
+        Creates an object with no value.
+    */
+    Id();
+    /** Copy constructor
+        @param other Object to copy from.
+     */
+    Id(const Id& other);
+    /** Attribute-based constructor
 
-            Copies values from the attribute.
+        Copies values from the attribute.
 
-            @param attribute Attribute to copy values from.
-        */
-        Id(const Attribute& attribute);
-        /** Assignment operator
-            @param other Object to assign from.
-            @return A reference to this.
-         */
-        Id& operator=(const Id& other);
+        @param attribute Attribute to copy values from.
+    */
+    Id(const Attribute& attribute);
+    /** Default destructor */
+    ~Id() = default;
 
-        //Getters
-        static std::string GetStaticName();
+    /** Assignment operator
+        @param other Object to assign from.
+        @return A reference to this.
+     */
+    Id& operator=(const Id& other);
 
-        //Setters
-        /** Set this attributes name
+    //Getters
+    static std::string GetStaticName();
 
-            @ATT This function does nothing. It's here only for compatibility
-            purposes.
-        */
-        void SetName(std::string name);
+    //Setters
+    /** Set this attributes name
 
-    protected:
+        @ATT This function does nothing. It's here only for compatibility
+        purposes.
+    */
+    void SetName(std::string name);
 
-    private:
+protected:
+
+private:
 };
 }
 

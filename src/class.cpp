@@ -1,15 +1,15 @@
-#include <sstream>
 #include "class.h"
+
+#include <sstream>
 
 namespace idogaf
 {
+
 Class::Class() : Attribute()
 {
-    //ctor
     name_ = Class::GetStaticName();
     classes_ = std::vector<std::string>();
 }
-
 
 Class::Class(const Attribute& attribute)
 {
@@ -31,15 +31,9 @@ Class::Class(const Attribute& attribute)
 
 Class::Class(const Class& other)
 {
-    //copy ctor
     name_ = Class::GetStaticName();
     value_ = other.value_;
     classes_ = other.classes_;
-}
-
-Class::~Class()
-{
-    //dtor
 }
 
 Class& Class::operator=(const Class& rhs)
@@ -53,8 +47,14 @@ Class& Class::operator=(const Class& rhs)
 }
 
 //Getters
-std::vector<std::string> Class::GetClassesInVector() { return classes_; }
-std::string Class::GetStaticName() { return "class"; }
+std::vector<std::string> Class::GetClassesInVector()
+{
+    return classes_;
+}
+std::string Class::GetStaticName()
+{
+    return "class";
+}
 
 //Setters
 void Class::SetName(std::string name) {}
@@ -62,7 +62,7 @@ void Class::SetName(std::string name) {}
 //Other
 bool Class::Matches(std::string className)
 {
-    for(auto it = classes_.begin();it != classes_.end();++it)
+    for(auto it = classes_.begin(); it != classes_.end(); ++it)
     {
         if(*it == className) return true;
     }
