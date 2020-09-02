@@ -45,7 +45,7 @@ public:
         @ATT This function does nothing. It's here only for compatibility
         purposes.
     */
-    void SetName(std::string name);
+    void SetName(const std::string& name);
 
 protected:
 

@@ -18,21 +18,21 @@ namespace idogaf
 
 class Element;
 
-typedef std::vector<Element>    Vector_E;
+typedef std::vector<Element>                    Vector_E;
 
-typedef std::vector<Element>::iterator  Vector_E_it;
+typedef std::vector<Element>::iterator          Vector_E_it;
 
-typedef std::vector<Element*>   Vector_P;
+typedef std::vector<Element*>                   Vector_P;
 
-typedef std::vector<Element*>::iterator Vector_P_it;
+typedef std::vector<Element*>::iterator         Vector_P_it;
 
-typedef std::set<Element>   Set_E;
+typedef std::set<Element>                       Set_E;
 
-typedef std::set<Element>::iterator     Set_E_it;
+typedef std::set<Element>::iterator             Set_E_it;
 
-typedef std::set<Element*>  Set_P;
+typedef std::set<Element*>                      Set_P;
 
-typedef std::set<Element*>::iterator    Set_P_it;
+typedef std::set<Element*>::iterator            Set_P_it;
 
 class Element
 {
@@ -45,7 +45,7 @@ public:
 
         @param name Tag name of the element.
     */
-    Element(std::string name);
+    Element(const std::string& name);
     /** Full constructor
 
         Constructs an Element object,
@@ -62,7 +62,7 @@ public:
 
         @param attributes Vector of attributes for the element.
     */
-    Element(std::string name, std::string text, Vector_E children,
+    Element(const std::string& name, const std::string& text, Vector_E children,
             Vector_A attributes);
     /** Common-attributes constructor
 
@@ -81,7 +81,7 @@ public:
 
         @param style Style for the element.
     */
-    Element(std::string name, std::string text, Vector_E children,
+    Element(const std::string& name, const std::string& text, Vector_E children,
             Class css_class, Id id, Style style);
     /** Copy constructor
 
@@ -109,23 +109,23 @@ public:
 
         @return Object created with copy contructor based on this element.
     */
-    Element     Copy();
+    Element     Copy() const;
     /** Check if this element is empty
 
         @return True if this element has no name, text, attributes
         and children.
     */
-    bool        Empty();
+    bool        Empty() const;
     /** Get tag name of this element
         @return Tag name of this element
         or an empty string if name has not been set.
     */
-    std::string GetName();
+    std::string GetName() const;
     /** Get text contained by this element.
         @return Text contained by this element
         or an empty string if the text has not been set.
     */
-    std::string GetText();
+    std::string GetText() const;
     /** Get pointer to the parent of this element
         @return A pointer to the parent
         or nullptr if the parent has not been set.
@@ -138,7 +138,7 @@ public:
 
         @return Class object matching this elements css class.
     */
-    Class       GetClass();
+    Class       GetClass() const;
     /** Get 'id' attribute of this element
 
         Get Id object of this element. If id for this element
@@ -146,7 +146,7 @@ public:
 
         @return Id object matching this elements id.
     */
-    Id          GetId();
+    Id          GetId() const;
     /** Get 'style' attribute of this element
 
         Get Style object of this element. If style for this element
@@ -154,12 +154,12 @@ public:
 
         @return Style object matching this elements css style.
     */
-    Style       GetStyle();
+    Style       GetStyle() const;
     /** Get children of this element
         @return Vector containing copies of all children of this element
         or an empty vector if this element has no children.
     */
-    Vector_E    GetChildren();
+    Vector_E    GetChildren() const;
     /** Get pointers to the children of this element
 
         Get pointers to every children of this element. Remember that any
@@ -181,7 +181,7 @@ public:
         or an empty vector if this element has no children
         matching given name.
     */
-    Vector_E    GetChildrenByTagName(std::string name);
+    Vector_E    GetChildrenByTagName(const std::string& name);
     /** Get children of this element by tag name.
 
         Finds and returns pointers to every child matching given name.
@@ -195,7 +195,7 @@ public:
         or an empty vector if this element has no children
         matching given name.
     */
-    Vector_P    GetChildrenPtrByTagName(std::string name);
+    Vector_P    GetChildrenPtrByTagName(const std::string& name);
     /** Get children of this element by class name.
 
         Finds and returns copies of every child matching given css class.
@@ -207,7 +207,7 @@ public:
         or an empty vector if this element has no children
         matching given class name.
     */
-    Vector_E    GetChildrenByClassName(std::string name);
+    Vector_E    GetChildrenByClassName(const std::string& name);
     /** Get children of this element by class name.
 
         Finds and returns pointers to every child matching given css class.
@@ -221,7 +221,7 @@ public:
         or an empty vector if this element has no children
         matching given class name.
     */
-    Vector_P    GetChildrenPtrByClassName(std::string name);
+    Vector_P    GetChildrenPtrByClassName(const std::string& name);
     /** Get children of this element by id.
 
         Finds and returns copies of every child matching given id.
@@ -233,7 +233,7 @@ public:
         or an empty vector if this element has no children
         matching given id.
     */
-    Vector_E    GetChildrenById(std::string id);
+    Vector_E    GetChildrenById(const std::string& id);
     /** Get children of this element by id.
 
         Finds and returns pointers to every child matching given id.
@@ -247,12 +247,12 @@ public:
         or an empty vector if this element has no children
         matching given id.
     */
-    Vector_P    GetChildrenPtrById(std::string id);
+    Vector_P    GetChildrenPtrById(const std::string& id);
     /** Get first child of this element
         @return Copy of the first child or an empty element
         if this element has no children.
     */
-    Element     GetFirstChild();
+    Element     GetFirstChild() const;
     /** Get first child of this element
         @return Pointer to the first child or nullptr
         if this element has no children.
@@ -264,7 +264,7 @@ public:
         or an empty element if number of children this element has is
         smaller or equal to the requested position.
     */
-    Element     GetChildAt(unsigned int position);
+    Element     GetChildAt(unsigned int position) const;
     /** Get pointer to a child at a given position
         @param position Position of the child.
         @return Pointer to child at requested position
@@ -276,7 +276,7 @@ public:
         @return Copy of the last child or an empty element
         if this element has no children.
     */
-    Element     GetLastChild();
+    Element     GetLastChild() const;
     /** Get pointer to the last child of this element
         @return Pointer to the last child or nullptr
         if this element has no children.
@@ -285,23 +285,23 @@ public:
     /** Get number of children this element has.
         @return Number of children this element has.
     */
-    size_t      GetChildrenCount();
+    size_t      GetChildrenCount() const;
     /** Get all attributes of this element
         @return Vector containing all of this elements attributes
         (class, id and style included). Empty vector if this element
         has no attributes.
     */
-    Vector_A    GetAttributes();
+    Vector_A    GetAttributes() const;
     /** Get this elements attribute by name
         @return An Attribute object containing attribute matching
         given name or an empty attribute if a matching attribute
         has not been found.
     */
-    Attribute   GetAttributeByName(std::string name);
+    Attribute   GetAttributeByName(const std::string& name);
     /** Check if this element has brother on the right
         @return True if it has right brother, false otherwise.
     */
-    bool        HasRightBrother();
+    bool        HasRightBrother() const;
     /** Get this elements right brother
 
         @return Pointer to it's right brother or nullptr if it has no
@@ -314,18 +314,18 @@ public:
     /** Set this elements name
         @param name New name for this element.
     */
-    void        SetName(std::string name);
+    void        SetName(const std::string& name);
     /** Set text contained by this element
         @param text Text to set.
     */
-    void        SetText(std::string text);
+    void        SetText(const std::string& text);
     /** Add text contained by this element
 
         Adds new text at the end of already existing text.
 
         @param text Text to add.
     */
-    void        AddText(std::string text);
+    void        AddText(const std::string& text);
     /** Set new css class attribute for this element
         @param newClass Class attribute to set.
     */
@@ -391,7 +391,7 @@ public:
 
         @param name Name of the attribute to remove
     */
-    void        RemoveAttributeByName(std::string name);
+    void        RemoveAttributeByName(const std::string& name);
     /** Add an attribute to this element
 
         Adds a given attribute to this element. If this element already
@@ -415,7 +415,7 @@ public:
         @param query CSS selector query.
         @return Vector containg every element matching given query.
     */
-    Vector_E    Find(std::string query);
+    Vector_E    Find(const std::string& query) const;
     /** Find elements in a tree
 
         This function uses CSS selectors to search for elements
@@ -435,7 +435,7 @@ public:
         @param query CSS selector query.
         @return Vector containg pointers to the elements matching given query.
     */
-    Vector_P    FindPtr(std::string query);
+    Vector_P    FindPtr(const std::string& query);
 
 
 protected:

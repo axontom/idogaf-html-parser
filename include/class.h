@@ -45,7 +45,7 @@ public:
     /** Get every class contained by this attribute in form of vector
         @return Vector of strings, with classes contained by this attribute.
     */
-    std::vector<std::string>    GetClassesInVector();
+    std::vector<std::string>    GetClassesInVector() const;
     static std::string          GetStaticName();
 
     //Setters
@@ -54,7 +54,7 @@ public:
         @ATT This function does nothing. It's here only for compatibility
         purposes.
     */
-    void SetName(std::string name);
+    void SetName(const std::string& name);
 
     //Other
     /** Checks if this attribute contains class of a given name.
@@ -66,7 +66,7 @@ public:
         @return True if any class contained by this attribute matches
         given name. False otherwise.
     */
-    bool Matches(std::string className);
+    bool Matches(const std::string& className);
 
 protected:
     std::vector<std::string> classes_;

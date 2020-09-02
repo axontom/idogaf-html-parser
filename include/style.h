@@ -56,7 +56,7 @@ public:
         @ATT This function does nothing. It's here only for compatibility
         purposes.
     */
-    void SetName(std::string name);
+    void SetName(const std::string& name);
 
 protected:
     std::vector<DStringPair>    styles_;
@@ -72,7 +72,7 @@ protected:
         @param str String to parse.
         @return Number of successfully added styles.
     */
-    unsigned int    ParseStringForStyles(std::string str);
+    unsigned int    ParseStringForStyles(const std::string& str);
 
 private:
 };

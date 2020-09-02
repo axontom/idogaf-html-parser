@@ -30,7 +30,7 @@ public:
 
         @param name Name for this Attribute.
     */
-    Attribute(std::string name);
+    Attribute(const std::string& name);
     /** Full contructor
 
         Constructs an Attribute with name and value specified.
@@ -39,7 +39,7 @@ public:
 
         @param value Value for this attribute.
     */
-    Attribute(std::string name, std::string value);
+    Attribute(const std::string& name, const std::string& value);
 
     /** Default destructor */
     ~Attribute() = default;
@@ -73,12 +73,12 @@ public:
 
         @param name Name to set.
     */
-    void        SetName(std::string name);
+    void        SetName(const std::string& name);
     /** Sets the value of the attribute
 
         @param content Value to set.
     */
-    void        SetValue(std::string value);
+    void        SetValue(const std::string& value);
 
 protected:
     std::string name_;

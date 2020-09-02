@@ -9,23 +9,23 @@
 namespace idogaf
 {
 
-Vector_E Search::Find(Element root, std::string query)
+Vector_E Search::Find(Element root, const std::string& query)
 {
     Vector_E result;
     Set_P resultSet;
     Set_P qResult;
-    query = trim(query);
+    std::string _query = trim(query);
     //Count number of ',' in query
     size_t cnt = 1, pos = 0;
-    while((pos = query.find(',', pos)) != std::string::npos)
+    while((pos = _query.find(',', pos)) != std::string::npos)
     {
         cnt++;
         pos++;
     }
     for(size_t i = 0, pos1 = 0; i < cnt; i++)
     {
-        size_t pos2 = query.find(',', pos1);
-        std::string cmplx = trim(query.substr(pos1, pos2-pos1));
+        size_t pos2 = _query.find(',', pos1);
+        std::string cmplx = trim(_query.substr(pos1, pos2-pos1));
         //in cmplx we have one of the complex queries
         //now process it
         bool first = true;
@@ -78,22 +78,22 @@ Vector_E Search::Find(Element root, std::string query)
     return result;
 }
 
-Vector_P Search::FindPtr(Element* root, std::string query)
+Vector_P Search::FindPtr(Element* root, const std::string& query)
 {
     Set_P result;
     Set_P qResult;
-    query = trim(query);
+    std::string _query = trim(query);
     //Count number of ',' in query
     size_t cnt = 0, pos = 0;
-    while((pos = query.find(',', pos)) != std::string::npos)
+    while((pos = _query.find(',', pos)) != std::string::npos)
     {
         cnt++;
         pos++;
     }
     for(size_t i = 0, pos1 = 0; i < cnt; i++)
     {
-        size_t pos2 = query.find(',', pos1);
-        std::string cmplx = trim(query.substr(pos1, pos2-pos1));
+        size_t pos2 = _query.find(',', pos1);
+        std::string cmplx = trim(_query.substr(pos1, pos2-pos1));
         //in cmplx we have one of the complex queries
         //now process it
         bool first = true;
@@ -141,7 +141,7 @@ Vector_P Search::FindPtr(Element* root, std::string query)
     return Vector_P(result.begin(), result.end());
 }
 
-Vector_E Search::FindInVector(Vector_E vec, std::string query)
+Vector_E Search::FindInVector(Vector_E vec, const std::string& query)
 {
     Vector_E result, partial;
     for(Vector_E_it it = vec.begin(); it != vec.end(); ++it)
@@ -153,7 +153,7 @@ Vector_E Search::FindInVector(Vector_E vec, std::string query)
 }
 
 //Private member functions
-Set_P Search::RunQuery(Set_P elements, std::string query)
+Set_P Search::RunQuery(Set_P elements, const std::string& query)
 {
     Set_P result;
     for(Set_P_it it = elements.begin(); it != elements.end(); ++it)
@@ -189,59 +189,60 @@ Set_P Search::RunQuery(Set_P elements, std::string query)
     return result;
 }
 
-bool Search::CheckElement(Element* element, std::string query)
+bool Search::CheckElement(Element* element, const std::string& query)
 {
-    if(query.empty()) return false;
+    std::string _query = query;
+    if(_query.empty()) return false;
     if(element == nullptr) return false;
 
-    switch(query.front())
+    switch(_query.front())
     {
     case '.':
-        return _ofClass(element, query.substr(1));
+        return _ofClass(element, _query.substr(1));
     case '#':
-        return _hasId(element, query.substr(1));
+        return _hasId(element, _query.substr(1));
     case '[':
     {
-        if(query.back() != ']') return false;
-        query = query.substr(1, query.length()-2);
-        size_t pos = query.find('=');
+        if(_query.back() != ']') return false;
+        _query = _query.substr(1, _query.length()-2);
+        size_t pos = _query.find('=');
         if(pos == std::string::npos)
-            return _hasAttribute(element, trim(query));
+            return _hasAttribute(element, trim(_query));
         else
         {
-            if(pos == 0 || pos == query.length()-1) return false;
-            switch(query[pos-1])
+            if(pos == 0 || pos == _query.length()-1) return false;
+            switch(_query[pos-1])
             {
             case '~':
                 return _hasWord(element, trim(query.substr(0,pos-1)),
-                                trim(query.substr(pos+1)));
+                                trim(_query.substr(pos+1)));
             case '|':
                 return _startingWith(element, trim(query.substr(0,pos-1)),
-                                     trim(query.substr(pos+1)));
+                                     trim(_query.substr(pos+1)));
             case '^':
                 return _beginingWith(element, trim(query.substr(0,pos-1)),
-                                     trim(query.substr(pos+1)));
+                                     trim(_query.substr(pos+1)));
             case '$':
                 return _endingWith(element, trim(query.substr(0,pos-1)),
-                                   trim(query.substr(pos+1)));
+                                   trim(_query.substr(pos+1)));
             case '*':
             {
-                if(!trim(query.substr(0,pos-1)).empty())
-                    return _hasSubstr(element, trim(query.substr(0,pos-1)),
-                                      trim(query.substr(pos+1)));
+                if(!trim(_query.substr(0,pos-1)).empty())
+                    return _hasSubstr(element, trim(_query.substr(0,pos-1)),
+                                      trim(_query.substr(pos+1)));
             }
             default:
-                return _hasValue(element, trim(query.substr(0,pos)),
-                                 trim(query.substr(pos+1)));
+                return _hasValue(element, trim(_query.substr(0,pos)),
+                                 trim(_query.substr(pos+1)));
             }
         }
     }
     default:
-        return element->GetName() == query;
+        return element->GetName() == _query;
     }
 }
 
-Set_P Search::CheckElements(Set_P elements, std::string query)
+Set_P Search::CheckElements(Set_P elements, const std::string& query)
 {
     Set_P result;
     for(Set_P_it it = elements.begin(); it != elements.end(); ++it)
@@ -348,46 +349,50 @@ Set_P Search::_preceded(Set_P elements)
 }
 
 //Single selectors
-bool Search::_ofClass(Element* e, std::string name)
+bool Search::_ofClass(Element* e, const std::string& name)
 {
     if(name == "*") return !e->GetClass().GetValue().empty();
     return e->GetClass().Matches(name);
 }
-bool Search::_hasId(Element* e, std::string name)
+bool Search::_hasId(Element* e, const std::string& name)
 {
     if(name == "*") return !e->GetId().GetValue().empty();
     return e->GetId().GetValue() == name;
 }
-bool Search::_hasAttribute(Element* e, std::string name)
+bool Search::_hasAttribute(Element* e, const std::string& name)
 {
     if(name == "*") return !e->GetAttributes().empty();
     return !e->GetAttributeByName(name).GetName().empty();
 }
-bool Search::_hasValue(Element* e, std::string name, std::string value)
+bool Search::_hasValue(Element* e, const std::string& name,
+                       const std::string& value)
 {
-    if(value.empty()) return false;
+    std::string _value = value;
+    if(_value.empty()) return false;
     if(name == "*" && value == "*") !e->GetAttributes().empty();
-    if(value == "*") return !e->GetAttributeByName(name).GetName().empty();
-    if(value.front() == '"' && value.back() == '"' && value.length() > 1)
-        value = value.substr(1,value.length()-2);
+    if(_value == "*") return !e->GetAttributeByName(name).GetName().empty();
+    if(_value.front() == '"' && _value.back() == '"' && _value.length() > 1)
+        _value = value.substr(1,value.length()-2);
     if(name == "*")
     {
         Vector_A attributes = e->GetAttributes();
         for(Vector_A::iterator it = attributes.begin(); it != attributes.end(); ++it)
         {
-            if(it->GetValue() == value) return true;
+            if(it->GetValue() == _value) return true;
         }
         return false;
     }
-    return e->GetAttributeByName(name).GetValue() == value;
+    return e->GetAttributeByName(name).GetValue() == _value;
 }
-bool Search::_hasWord(Element* e, std::string name, std::string word)
+bool Search::_hasWord(Element* e, const std::string& name,
+                      const std::string& word)
 {
-    if(word.empty()) return false;
+    std::string _word = word;
+    if(_word.empty()) return false;
     if(name == "*" && word == "*") !e->GetAttributes().empty();
-    if(word == "*") return !e->GetAttributeByName(name).GetName().empty();
-    if(word.front() == '"' && word.back() == '"' && word.length() > 1)
-        word = word.substr(1,word.length()-2);
+    if(_word == "*") return !e->GetAttributeByName(name).GetName().empty();
+    if(_word.front() == '"' && _word.back() == '"' && _word.length() > 1)
+        _word = _word.substr(1,_word.length()-2);
     Vector_A attributes;
     if(name == "*")
         attributes = e->GetAttributes();
@@ -404,18 +409,20 @@ bool Search::_hasWord(Element* e, std::string name, std::string word)
         while(ss.good())
         {
             ss >> buffer;
-            if(buffer == word) return true;
+            if(buffer == _word) return true;
         }
     }
     return false;
 }
-bool Search::_startingWith(Element* e, std::string name, std::string phrase)
+bool Search::_startingWith(Element* e, const std::string& name,
+                           const std::string& phrase)
 {
-    if(phrase.empty()) return false;
-    if(name == "*" && phrase == "*") !e->GetAttributes().empty();
-    if(phrase == "*") return !e->GetAttributeByName(name).GetName().empty();
-    if(phrase.front() == '"' && phrase.back() == '"' && phrase.length() > 1)
-        phrase = phrase.substr(1,phrase.length()-2);
+    std::string _phrase = phrase;
+    if(_phrase.empty()) return false;
+    if(name == "*" && _phrase == "*") !e->GetAttributes().empty();
+    if(_phrase == "*") return !e->GetAttributeByName(name).GetName().empty();
+    if(_phrase.front() == '"' && _phrase.back() == '"' && _phrase.length() > 1)
+        _phrase = _phrase.substr(1,_phrase.length()-2);
     Vector_A attributes;
     if(name == "*")
         attributes = e->GetAttributes();
@@ -428,20 +435,22 @@ bool Search::_startingWith(Element* e, std::string name, std::string phrase)
     for(Vector_A_it it = attributes.begin(); it != attributes.end(); ++it)
     {
         std::string value = it->GetValue();
-        if(value.length() < phrase.length()) continue;
-        if(value == phrase) return true;
-        if(value.substr(0,phrase.length()+1) == phrase+' ' ||
-                value.substr(0,phrase.length()+1) == phrase+'-') return true;
+        if(value.length() < _phrase.length()) continue;
+        if(value == _phrase) return true;
+        if(value.substr(0,_phrase.length()+1) == _phrase+' ' ||
+                value.substr(0,_phrase.length()+1) == _phrase+'-') return true;
     }
     return false;
 }
-bool Search::_beginingWith(Element* e, std::string name, std::string phrase)
+bool Search::_beginingWith(Element* e, const std::string& name,
+                           const std::string& phrase)
 {
-    if(phrase.empty()) return false;
-    if(name == "*" && phrase == "*") !e->GetAttributes().empty();
-    if(phrase == "*") return !e->GetAttributeByName(name).GetName().empty();
-    if(phrase.front() == '"' && phrase.back() == '"' && phrase.length() > 1)
-        phrase = phrase.substr(1,phrase.length()-2);
+    std::string _phrase = phrase;
+    if(_phrase.empty()) return false;
+    if(name == "*" && _phrase == "*") !e->GetAttributes().empty();
+    if(_phrase == "*") return !e->GetAttributeByName(name).GetName().empty();
+    if(_phrase.front() == '"' && _phrase.back() == '"' && _phrase.length() > 1)
+        _phrase = _phrase.substr(1,_phrase.length()-2);
     Vector_A attributes;
     if(name == "*")
         attributes = e->GetAttributes();
@@ -454,18 +463,20 @@ bool Search::_beginingWith(Element* e, std::string name, std::string phrase)
     for(Vector_A_it it = attributes.begin(); it != attributes.end(); ++it)
     {
         std::string value = it->GetValue();
-        if(value.length() < phrase.length()) continue;
-        if(value.substr(0,phrase.length()) == phrase) return true;
+        if(value.length() < _phrase.length()) continue;
+        if(value.substr(0,_phrase.length()) == _phrase) return true;
     }
     return false;
 }
-bool Search::_endingWith(Element* e, std::string name, std::string phrase)
+bool Search::_endingWith(Element* e, const std::string& name,
+                         const std::string& phrase)
 {
-    if(phrase.empty()) return false;
-    if(name == "*" && phrase == "*") !e->GetAttributes().empty();
-    if(phrase == "*") return !e->GetAttributeByName(name).GetName().empty();
-    if(phrase.front() == '"' && phrase.back() == '"' && phrase.length() > 1)
-        phrase = phrase.substr(1,phrase.length()-2);
+    std::string _phrase = phrase;
+    if(_phrase.empty()) return false;
+    if(name == "*" && _phrase == "*") !e->GetAttributes().empty();
+    if(_phrase == "*") return !e->GetAttributeByName(name).GetName().empty();
+    if(_phrase.front() == '"' && _phrase.back() == '"' && _phrase.length() > 1)
+        _phrase = _phrase.substr(1,_phrase.length()-2);
     Vector_A attributes;
     if(name == "*")
         attributes = e->GetAttributes();
@@ -478,19 +489,22 @@ bool Search::_endingWith(Element* e, std::string name, std::string phrase)
     for(Vector_A_it it = attributes.begin(); it != attributes.end(); ++it)
     {
         std::string value = it->GetValue();
-        if(value.length() < phrase.length()) continue;
-        if(value.substr(value.length()-phrase.length(),
-                        std::string::npos) == phrase) return true;
+        if(value.length() < _phrase.length()) continue;
+        if(value.substr(value.length()-_phrase.length(),
+                        std::string::npos) == _phrase) return true;
     }
     return false;
 }
-bool Search::_hasSubstr(Element* e, std::string name, std::string substring)
+bool Search::_hasSubstr(Element* e, const std::string& name,
+                        const std::string& substring)
 {
-    if(substring.empty()) return false;
-    if(name == "*" && substring == "*") !e->GetAttributes().empty();
-    if(substring == "*") return !e->GetAttributeByName(name).GetName().empty();
-    if(substring.front() == '"' && substring.back() == '"' && substring.length() > 1)
-        substring = substring.substr(1,substring.length()-2);
+    std::string _substring = substring;
+    if(_substring.empty()) return false;
+    if(name == "*" && _substring == "*") !e->GetAttributes().empty();
+    if(_substring == "*") return !e->GetAttributeByName(name).GetName().empty();
+    if(_substring.front() == '"' && _substring.back() == '"'
+       && _substring.length() > 1)
+        _substring = _substring.substr(1,_substring.length()-2);
     Vector_A attributes;
     if(name == "*")
         attributes = e->GetAttributes();
@@ -501,7 +515,7 @@ bool Search::_hasSubstr(Element* e, std::string name, std::string substring)
         attributes.push_back(a);
     }
     for(Vector_A_it it = attributes.begin(); it != attributes.end(); ++it)
-        if(it->GetValue().find(substring) != std::string::npos) return true;
+        if(it->GetValue().find(_substring) != std::string::npos) return true;
     return false;
 }
 }

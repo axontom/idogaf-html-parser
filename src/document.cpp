@@ -26,11 +26,11 @@ Document& Document::operator=(const Document& rhs)
 }
 
 //Getters
-std::string Document::GetDoctype()
+std::string Document::GetDoctype() const
 {
     return doctype_;
 }
-Element Document::GetRoot()
+Element Document::GetRoot() const
 {
     return root_;
 }
@@ -38,7 +38,11 @@ Element* Document::GetRootPtr()
 {
     return &root_;
 }
-bool Document::Empty()
+const Element* Document::GetRootPtr() const
+{
+    return &root_;
+}
+bool Document::Empty() const
 {
     return doctype_.empty() && root_.Empty();
 }

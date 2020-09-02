@@ -35,6 +35,6 @@ std::string Id::GetStaticName()
 }
 
 //Setters
-void Id::SetName(std::string name) {}
+void Id::SetName(const std::string& name) {}
 
 }

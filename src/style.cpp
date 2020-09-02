@@ -41,25 +41,26 @@ std::string Style::GetStaticName()
 }
 
 //Setters
-void Style::SetName(std::string name) {}
+void Style::SetName(const std::string& name) {}
 
 //Protected member functions
-unsigned int Style::ParseStringForStyles(std::string str)
+unsigned int Style::ParseStringForStyles(const std::string& str)
 {
+    std::string s = str;
     unsigned int counter = 0;
     while(true)
     {
         DStringPair buffer;
-        size_t colonPos = str.find(':');
-        size_t semicolonPos = str.find(';');
+        size_t colonPos = s.find(':');
+        size_t semicolonPos = s.find(';');
         if( colonPos == std::string::npos ||
                 semicolonPos == std::string::npos ) break;
-        buffer.name = str.substr(0, colonPos);
-        buffer.value = str.substr(colonPos+1, semicolonPos-colonPos-1);
+        buffer.name = s.substr(0, colonPos);
+        buffer.value = s.substr(colonPos+1, semicolonPos-colonPos-1);
         styles_.push_back(buffer);
-        value_ += str.substr(0, semicolonPos+1);
+        value_ += s.substr(0, semicolonPos+1);
         counter++;
-        str = str.substr(semicolonPos+1, std::string::npos);
+        s = s.substr(semicolonPos+1, std::string::npos);
     }
     return counter;
 }

@@ -32,7 +32,7 @@ Parser& Parser::operator=(const Parser& rhs)
 }
 
 //Getters
-Document Parser::GetDocument()
+Document Parser::GetDocument() const
 {
     return document_;
 }
@@ -40,7 +40,7 @@ Document* Parser::GetDocumentPtr()
 {
     return &document_;
 }
-bool Parser::Silent()
+bool Parser::Silent() const
 {
     return silent_;
 }
@@ -401,7 +401,7 @@ std::string Parser::GetIndentation(unsigned int level) const
     return indentation;
 }
 
-bool Parser::UnexpectedTagError(std::string tagName)
+bool Parser::UnexpectedTagError(const std::string& tagName) const
 {
     if(!silent_)
     {
@@ -411,7 +411,7 @@ bool Parser::UnexpectedTagError(std::string tagName)
     return false;
 }
 
-bool Parser::DocumentEmptyError()
+bool Parser::DocumentEmptyError() const
 {
     if(!silent_)
         std::cerr << "Error: Document is empty." << std::endl;

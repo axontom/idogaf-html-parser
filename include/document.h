@@ -33,23 +33,29 @@ public:
         @return Doctype of this document or an empty string if the doctype
         has not been set.
     */
-    std::string GetDoctype();
+    std::string GetDoctype() const;
     /** Get the root element of the document
 
         @return Copy of the root element of this document, empty element if
         the root element has not been set.
     */
-    Element     GetRoot();
+    Element     GetRoot() const;
     /** Get the root element of the document
 
         @return Pointer to the root element of this document, nullptr if
         the root element has not been set.
     */
     Element*    GetRootPtr();
+    /** Get the root element of the document
+
+        @return Pointer to the root element of this document, nullptr if
+        the root element has not been set.
+    */
+    const Element*    GetRootPtr() const;
     /** Check if document is empty
         @return True if root and doctype were not set, False otherwise.
         */
-    bool        Empty();
+    bool        Empty() const;
 
     //Setters
     /** Set the root element of this document

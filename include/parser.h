@@ -35,12 +35,12 @@ public:
     /** Get parsed document
         @return Copy of the parsed document.
     */
-    Document    GetDocument();
+    Document    GetDocument() const;
     /** Get parsed document
         @return Pointer to the parsed document.
     */
     Document*   GetDocumentPtr();
-    bool        Silent();
+    bool        Silent() const;
 
     //Setters
     /** Set parsers silent mode
@@ -199,7 +199,7 @@ protected:
         @param tagName Name of the unexpected tag.
         @return Always false.
     */
-    bool UnexpectedTagError(std::string tagName);
+    bool UnexpectedTagError(const std::string& tagName) const;
     /** End with document empty error
 
         Prints document empty error message, if parser doesn't run in
@@ -207,7 +207,7 @@ protected:
 
         @return Always false.
     */
-    bool DocumentEmptyError();
+    bool DocumentEmptyError() const;
 
 private:
 };

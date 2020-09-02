@@ -47,7 +47,7 @@ Class& Class::operator=(const Class& rhs)
 }
 
 //Getters
-std::vector<std::string> Class::GetClassesInVector()
+std::vector<std::string> Class::GetClassesInVector() const
 {
     return classes_;
 }
@@ -57,10 +57,10 @@ std::string Class::GetStaticName()
 }
 
 //Setters
-void Class::SetName(std::string name) {}
+void Class::SetName(const std::string& name) {}
 
 //Other
-bool Class::Matches(std::string className)
+bool Class::Matches(const std::string& className)
 {
     for(auto it = classes_.begin(); it != classes_.end(); ++it)
     {

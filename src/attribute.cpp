@@ -9,13 +9,13 @@ Attribute::Attribute()
     value_ = std::string();
 }
 
-Attribute::Attribute(std::string name)
+Attribute::Attribute(const std::string& name)
 {
     name_ = name;
     value_ = std::string();
 }
 
-Attribute::Attribute(std::string name, std::string value)
+Attribute::Attribute(const std::string& name, const std::string& value)
 {
     name_ = name;
     value_ = value;
@@ -47,11 +47,11 @@ std::string Attribute::GetValue() const
 }
 
 //Setters
-void Attribute::SetName(std::string name)
+void Attribute::SetName(const std::string& name)
 {
     name_ = name;
 }
-void Attribute::SetValue(std::string value)
+void Attribute::SetValue(const std::string& value)
 {
     value_ = value;
 }
