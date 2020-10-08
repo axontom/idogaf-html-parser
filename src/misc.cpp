@@ -32,4 +32,11 @@ size_t countLines(const std::string& str)
         if(str[i] == '\n') lines++;
     return lines;
 }
+bool isInArray(const std::string& str, const std::string (&strArray)[],
+               size_t arrSize)
+{
+    for(size_t i = 0; i < arrSize; i++)
+        if(strArray[i] == str) return true;
+    return false;
+}
 }

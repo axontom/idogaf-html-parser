@@ -22,6 +22,21 @@ std::string trim(const std::string& str);
 */
 size_t countLines(const std::string& str);
 
+/** Check for string in array
+
+    @param str String to search for.
+    @param strArray Array to search in.
+    @param arrSize Size of the array.
+    @return True if a string equal to str was found inside strArray,
+            false otherwise.
+*/
+bool isInArray(const std::string& str, const std::string (&strArray)[],
+               size_t arrSize);
+
+const std::string kSingletonTags[] = {  "area", "base", "br", "col", "command",
+                                        "embed", "hr", "img", "input", "keygen",
+                                        "link", "meta", "param", "source",
+                                        "track", "wbr" };
 }
 
 #endif // MISC_H_INCLUDED

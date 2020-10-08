@@ -293,12 +293,14 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         }
         else    //Opening tag
         {
-            if(activeBuffer.substr(0,5) == "<link"
-                    || activeBuffer.substr(0,5) == "<meta") emptyOut = true;
             //Extract anything between '<' and '>'
             activeBuffer = activeBuffer.substr(1, activeBuffer.length()-1-1);
             //Parse active buffer for name and attributes
-            return ParseTagForElement(activeBuffer);
+            ret = ParseTagForElement(activeBuffer);
+            if(isInArray(ret.GetName(), kSingletonTags,
+                sizeof(kSingletonTags)/sizeof(std::string)))
+                emptyOut = true;
+            break;
         }
     }
     return ret;
