@@ -15,6 +15,13 @@ namespace idogaf
 */
 std::string trim(const std::string& str);
 
+/** Count '\n' characters in string
+
+    @param str String to use.
+    @return Number of '\n' characters.
+*/
+size_t countLines(const std::string& str);
+
 }
 
 #endif // MISC_H_INCLUDED

@@ -25,4 +25,11 @@ std::string trim(const std::string& str)
     }
     return str.substr(left, right-left+1);
 }
+size_t countLines(const std::string& str)
+{
+    size_t lines = 0;
+    for(size_t i = 0; i < str.length(); i++)
+        if(str[i] == '\n') lines++;
+    return lines;
+}
 }

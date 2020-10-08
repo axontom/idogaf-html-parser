@@ -124,11 +124,15 @@ protected:
         Output parameter, if any text was found before the next tag, this
         will contain it, otherwise it will be empty.
 
+        @param linesOut
+        Output parameter, returns number of lines read.
+
         @return An Element object with the next tag,
         or an empty element if the stream ended or failed.
     */
     Element     ReadNextTag(std::istream& stream, bool& emptyOut,
-                            bool& closeOut, std::string& textOut);
+                            bool& closeOut, std::string& textOut,
+                            size_t& linesOut);
     /** Parse tag for an element
 
         Parses a html tag in a given string for an Element object with
@@ -197,9 +201,10 @@ protected:
         silent mode.
 
         @param tagName Name of the unexpected tag.
+        @param line Line at which the unexpected tag was found.
         @return Always false.
     */
-    bool UnexpectedTagError(const std::string& tagName) const;
+    bool UnexpectedTagError(const std::string& tagName, size_t line) const;
     /** End with document empty error
 
         Prints document empty error message, if parser doesn't run in

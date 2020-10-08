@@ -69,34 +69,38 @@ bool Parser::Parse(const std::string& filename)
 
 bool Parser::Parse(std::istream& stream)
 {
+    size_t lineCounter = 1;
+    size_t linesOut = 0;
     bool closingTag, emptyTag;
     std::string textBeforeTag;
     std::stack<Element*> eStack;
     Element root;
     Element* A;
     Element B;
-    root = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
+    root = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag, linesOut);
+    lineCounter += linesOut;
     if(root.Empty()) return !stream.fail();
     else if(emptyTag || closingTag)
     {
-        return UnexpectedTagError(root.GetName());
+        return UnexpectedTagError(root.GetName(), lineCounter);
     }
     document_.SetRoot(root);
     A = document_.GetRootPtr();
     while(true)
     {
-        B = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag);
+        B = ReadNextTag(stream, emptyTag, closingTag, textBeforeTag, linesOut);
+        lineCounter += linesOut;
         if(!textBeforeTag.empty()) A->AddText(textBeforeTag);
         if(B.Empty()) return !stream.fail();
         else if(emptyTag)
             A->AddChild(B);
         else if(closingTag)
         {
-            while(A->GetName() != B.GetName() && !eStack.empty())
-            {
-                A = eStack.top();
-                eStack.pop();
-            }
+//            while(A->GetName() != B.GetName() && !eStack.empty())
+//            {
+//                A = eStack.top();
+//                eStack.pop();
+//            }
             if(A->GetName() == B.GetName())
             {
                 if(eStack.empty()) return true;
@@ -105,7 +109,7 @@ bool Parser::Parse(std::istream& stream)
             }
             else
             {
-                return UnexpectedTagError(B.GetName());
+                return UnexpectedTagError(B.GetName(), lineCounter);
             }
         }
         else
@@ -186,11 +190,13 @@ bool Parser::WriteToStream(std::ostream& stream)
 
 //Protected member functions
 Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
-                            bool& closeOut, std::string& textOut)
+                            bool& closeOut, std::string& textOut,
+                            size_t& linesOut)
 {
     emptyOut = false;
     closeOut = false;
     textOut = std::string();
+    linesOut = 0;
     std::string activeBuffer;
     Element ret = Element();
     std::stringbuf buffer;
@@ -202,12 +208,8 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         while(stream.peek() != '<')
         {
             stream.get(buffer, '<');
-            if(stream.peek() == '\n') buffer.sputc('\n');
-            while(stream.peek() == '\n')
-            {
-                stream.get();
-            }
         }
+        linesOut += countLines(buffer.str());
         textOut += trim(buffer.str());
         //Here in next char in stream is '<' (next tag ready to extract).
         //Iin textOut we have any text (nicely trimmed) between
@@ -218,12 +220,8 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         while(stream.peek() != '>')
         {
             stream.get(buffer, '>');
-            if(stream.peek() == '\n') buffer.sputc(' ');
-            while(stream.peek() == '\n')
-            {
-                stream.get();
-            }
         }
+        linesOut += countLines(buffer.str());
         buffer.sputc(stream.get());   //extract '>' into buffer
         activeBuffer = buffer.str();
 
@@ -261,6 +259,7 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                     stream.get(buffer, '<');
                 if(stream.peek() == '\n')
                 {
+                    linesOut++;
                     buffer.sputc('\n');
                     stream.get();
                     continue;
@@ -271,6 +270,7 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
                 if(trim(buf.substr(3,buf.length()-3-1)) == "script") break;
                 else buffer.sputn(buf.c_str(),buf.length());
             }
+            linesOut += countLines(buffer.str());
             ret.AddText(trim(buffer.str()));
             emptyOut = true;
             return ret;
@@ -401,11 +401,12 @@ std::string Parser::GetIndentation(unsigned int level) const
     return indentation;
 }
 
-bool Parser::UnexpectedTagError(const std::string& tagName) const
+bool Parser::UnexpectedTagError(const std::string& tagName, size_t line) const
 {
     if(!silent_)
     {
-        std::cerr << "Error: Unexpected tag " << tagName << std::endl;
+        std::cerr << "Error: Unexpected tag " << tagName;
+        std::cerr << " at line " << line << std::endl;
         std::cerr << "Document is probably ill formed.\n";
     }
     return false;

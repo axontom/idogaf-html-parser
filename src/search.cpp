@@ -214,16 +214,16 @@ bool Search::CheckElement(Element* element, const std::string& query)
             switch(_query[pos-1])
             {
             case '~':
-                return _hasWord(element, trim(query.substr(0,pos-1)),
+                return _hasWord(element, trim(_query.substr(0,pos-1)),
                                 trim(_query.substr(pos+1)));
             case '|':
-                return _startingWith(element, trim(query.substr(0,pos-1)),
+                return _startingWith(element, trim(_query.substr(0,pos-1)),
                                      trim(_query.substr(pos+1)));
             case '^':
-                return _beginingWith(element, trim(query.substr(0,pos-1)),
+                return _beginingWith(element, trim(_query.substr(0,pos-1)),
                                      trim(_query.substr(pos+1)));
             case '$':
-                return _endingWith(element, trim(query.substr(0,pos-1)),
+                return _endingWith(element, trim(_query.substr(0,pos-1)),
                                    trim(_query.substr(pos+1)));
             case '*':
             {
