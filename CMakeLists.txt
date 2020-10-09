@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(idogaf VERSION 1.0.0 DESCRIPTION "idogaf - c++ html parser")
+project(idogaf VERSION 1.1.0 DESCRIPTION "idogaf - c++ html parser")
 include(GNUInstallDirs)
 set(IDOGAF_SRC_DIR src)
 set(IDOGAF_INCLUDE_DIR include)

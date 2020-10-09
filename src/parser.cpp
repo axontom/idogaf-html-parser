@@ -254,6 +254,19 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             //Ignore comments for now
             //Just add new line to the text
             textOut += '\n';
+            if(activeBuffer.substr(activeBuffer.length()-3,3) != "-->")
+            {
+                buffer.str("");
+                while(stream.good())
+                {
+                    stream.get(buffer, '>');
+                    buffer.sputc(stream.get());
+                    activeBuffer = buffer.str();
+                    if(activeBuffer.substr(activeBuffer.length()-3,3) == "-->")
+                        break;
+                }
+                linesOut += countLines(buffer.str());
+            }
         }
         else if(activeBuffer.substr(0,9) == "<!DOCTYPE")
         {
