@@ -41,6 +41,7 @@ public:
     */
     Document*   GetDocumentPtr();
     bool        Silent() const;
+    bool        SkipUnnecessaryClosingTags() const;
 
     //Setters
     /** Set parsers silent mode
@@ -52,6 +53,14 @@ public:
         to console and false otherwise.
     */
     void        Silent(bool silent = false);
+    /** Skip unnecessary closing tags
+
+        Setting this to true will allow parsing without reporting errors,
+        if a misplaced closing tag was found.
+
+        @param value Use true to enable this option and false to disable.
+    */
+    void        SkipUnnecessaryClosingTags(bool value);
 
     //Other
     /** Parse html document from file
@@ -90,6 +99,7 @@ public:
 
 protected:
     bool        silent_;
+    bool        skipUnnecessaryClosingTags_;
     Document    document_;
 
     /** Read next html tag from stream

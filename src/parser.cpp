@@ -14,6 +14,7 @@ namespace idogaf
 Parser::Parser()
 {
     silent_ = false;
+    skipUnnecessaryClosingTags_ = false;
 }
 
 Parser::Parser(const Parser& other)
@@ -44,11 +45,19 @@ bool Parser::Silent() const
 {
     return silent_;
 }
+bool Parser::SkipUnnecessaryClosingTags() const
+{
+    return skipUnnecessaryClosingTags_;
+}
 
 //Setters
 void Parser::Silent(bool silent)
 {
     silent_ = silent;
+}
+void Parser::SkipUnnecessaryClosingTags(bool value)
+{
+    skipUnnecessaryClosingTags_ = value;
 }
 
 //Other
@@ -96,11 +105,6 @@ bool Parser::Parse(std::istream& stream)
             A->AddChild(B);
         else if(closingTag)
         {
-//            while(A->GetName() != B.GetName() && !eStack.empty())
-//            {
-//                A = eStack.top();
-//                eStack.pop();
-//            }
             if(A->GetName() == B.GetName())
             {
                 if(eStack.empty()) return true;
@@ -109,8 +113,28 @@ bool Parser::Parse(std::istream& stream)
             }
             else
             {
+                if(!eStack.empty())
+                {
+                    if(omittClosingTagNMC(A->GetName(), eStack.top()->GetName())
+                        && trim(textBeforeTag).empty()
+                        && eStack.top()->GetName() == B.GetName())
+                    {
+                        eStack.pop();
+                        if(eStack.empty()) return true;
+                        A = eStack.top();
+                        eStack.pop();
+                        continue;
+                    }
+                }
+                if(skipUnnecessaryClosingTags_) continue;
                 return UnexpectedTagError(B.GetName(), lineCounter);
             }
+        }
+        else if(omittClosingTag(A->GetName(), B.GetName())
+                && trim(textBeforeTag).empty())
+        {
+            eStack.top()->AddChild(B);
+            A = eStack.top()->GetLastChildPtr();
         }
         else
         {
