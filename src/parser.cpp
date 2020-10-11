@@ -334,8 +334,7 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
             activeBuffer = activeBuffer.substr(1, activeBuffer.length()-1-1);
             //Parse active buffer for name and attributes
             ret = ParseTagForElement(activeBuffer);
-            if(isInArray(ret.GetName(), kSingletonTags,
-                sizeof(kSingletonTags)/sizeof(std::string)))
+            if(strInVector(ret.GetName(), kSingletonTags))
                 emptyOut = true;
             break;
         }

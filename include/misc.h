@@ -2,6 +2,7 @@
 #define MISC_H_INCLUDED
 
 #include <string>
+#include <vector>
 
 namespace idogaf
 {
@@ -22,16 +23,14 @@ std::string trim(const std::string& str);
 */
 size_t countLines(const std::string& str);
 
-/** Check for string in array
+/** Check for string in vector
 
     @param str String to search for.
-    @param strArray Array to search in.
-    @param arrSize Size of the array.
-    @return True if a string equal to str was found inside strArray,
+    @param strVec Vector to search in.
+    @return True if a string equal to str was found inside strVec,
             false otherwise.
 */
-bool isInArray(const std::string& str, const std::string (&strArray)[],
-               size_t arrSize);
+bool strInVector(const std::string& str, const std::vector<std::string>& strVec);
 
 /** Check if closing tag can be omitted
 
@@ -56,19 +55,16 @@ bool omittClosingTag(const std::string& tag, const std::string& nextTag);
 bool omittClosingTagNMC(const std::string& tag, const std::string& parent);
 
 
-const std::string kSingletonTags[] = {  "area", "base", "br", "col", "command",
-                                        "embed", "hr", "img", "input", "keygen",
-                                        "link", "meta", "param", "source",
-                                        "track", "wbr" };
-const std::string kpElementOptArr[] = { "address", "article", "aside",
-                                        "blockquote", "dic", "dl", "fieldset",
-                                        "footer", "form", "h1", "h2", "h3",
-                                        "h4", "h5", "h6", "header", "hgroup",
-                                        "hr", "main", "nav", "ol", "p", "pre",
-                                        "section", "table", "ul" };
-const std::string kOptCTagNMC[]     = { "li", "dd", "rb", "rt", "rtc", "rp",
-                                        "optgroup", "option", "tbody", "tfoot",
-                                        "tr", "td", "th" };
+const std::vector<std::string> kSingletonTags = {
+    "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
+    "keygen", "link", "meta", "param", "source", "track", "wbr" };
+const std::vector<std::string> kpElementOptVec = {
+    "address", "article", "aside", "blockquote", "dic", "dl", "fieldset",
+    "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup",
+    "hr", "main", "nav", "ol", "p", "pre", "section", "table", "ul" };
+const std::vector<std::string> kOptCTagNMC = {
+    "li", "dd", "rb", "rt", "rtc", "rp", "optgroup", "option", "tbody", "tfoot",
+    "tr", "td", "th" };
 }
 
 #endif // MISC_H_INCLUDED

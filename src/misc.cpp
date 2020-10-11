@@ -35,11 +35,10 @@ size_t countLines(const std::string& str)
         if(str[i] == '\n') lines++;
     return lines;
 }
-bool isInArray(const std::string& str, const std::string (&strArray)[],
-               size_t arrSize)
+bool strInVector(const std::string& str, const std::vector<std::string> &strVec)
 {
-    for(size_t i = 0; i < arrSize; i++)
-        if(strArray[i] == str) return true;
+    for(auto& s : strVec)
+        if(s == str) return true;
     return false;
 }
 bool omittClosingTag(const std::string& tag, const std::string& nextTag)
@@ -51,8 +50,7 @@ bool omittClosingTag(const std::string& tag, const std::string& nextTag)
     if(tag == "dd")
         return nextTag == "dt" || nextTag == "dd";
     if(tag == "p")
-        return isInArray(nextTag, kpElementOptArr,
-                         sizeof(kpElementOptArr)/sizeof(std::string));
+        return strInVector(nextTag, kpElementOptVec);
     if(tag == "rb" || tag == "rt" || tag == "rtc" || tag == "rp")
         return nextTag == "rb" || nextTag == "rt" ||
                nextTag == "rtc" || nextTag == "rp";
@@ -72,7 +70,7 @@ bool omittClosingTag(const std::string& tag, const std::string& nextTag)
 bool omittClosingTagNMC(const std::string& tag, const std::string& parent)
 {
     if(tag == "p") return parent != "a";
-    return isInArray(tag, kOptCTagNMC, sizeof(kOptCTagNMC)/sizeof(std::string));
+    return strInVector(tag, kOptCTagNMC);
 }
 
 }
