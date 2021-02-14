@@ -300,10 +300,10 @@ Set_P Search::_inside(Set_P elements)
             {
                 while(!e->HasRightBrother())
                 {
-                    if(e->GetParent() == nullptr) break;
+                    if(e->GetParent() == nullptr || e->GetParent() == *it) break;
                     e = e->GetParent();
                 }
-                if(e->GetParent() == nullptr) break;
+                if(e->GetParent() == nullptr || e->GetParent() == *it) break;
                 e = e->GetRightBrotherPtr();
             }
         }
