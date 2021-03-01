@@ -1,6 +1,6 @@
 # idogaf-html-parser
 ## General info
-**idogaf** is a C++ html parser library created for easy and convienient manipulation on html files and data extraction.
+**idogaf** is a C++ html parser library created for easy and convenient manipulation on html files and data extraction.
 
 ## Main features
 **idogaf** features reading and writing html files to/from file and std::stream.
