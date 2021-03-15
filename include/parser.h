@@ -42,6 +42,7 @@ public:
     Document*   GetDocumentPtr();
     bool        Silent() const;
     bool        SkipUnnecessaryClosingTags() const;
+    bool        AllowMistypedCommentTags() const;
 
     //Setters
     /** Set parsers silent mode
@@ -61,6 +62,14 @@ public:
         @param value Use true to enable this option and false to disable.
     */
     void        SkipUnnecessaryClosingTags(bool value);
+    /** Allow mistyped comment tags
+
+        Setting this to true will result in treating "<! --" string as a start
+        of a comment.
+
+        @param value Use true to enable this option and false to disable.
+    */
+    void        AllowMistypedCommentTags(bool value);
 
     //Other
     /** Parse html document from file
@@ -100,6 +109,7 @@ public:
 protected:
     bool        silent_;
     bool        skipUnnecessaryClosingTags_;
+    bool        allowMistypedCommentTags_;
     Document    document_;
 
     /** Read next html tag from stream

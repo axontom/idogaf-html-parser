@@ -15,12 +15,15 @@ Parser::Parser()
 {
     silent_ = false;
     skipUnnecessaryClosingTags_ = false;
+    allowMistypedCommentTags_ = false;
 }
 
 Parser::Parser(const Parser& other)
 {
     silent_ = other.silent_;
     document_ = other.document_;
+    skipUnnecessaryClosingTags_ = other.skipUnnecessaryClosingTags_;
+    allowMistypedCommentTags_ = other.allowMistypedCommentTags_;
 }
 
 Parser& Parser::operator=(const Parser& rhs)
@@ -29,6 +32,8 @@ Parser& Parser::operator=(const Parser& rhs)
     //assignment operator
     silent_ = rhs.silent_;
     document_ = rhs.document_;
+    skipUnnecessaryClosingTags_ = rhs.skipUnnecessaryClosingTags_;
+    allowMistypedCommentTags_ = rhs.allowMistypedCommentTags_;
     return *this;
 }
 
@@ -49,6 +54,10 @@ bool Parser::SkipUnnecessaryClosingTags() const
 {
     return skipUnnecessaryClosingTags_;
 }
+bool Parser::AllowMistypedCommentTags() const
+{
+    return allowMistypedCommentTags_;
+}
 
 //Setters
 void Parser::Silent(bool silent)
@@ -58,6 +67,10 @@ void Parser::Silent(bool silent)
 void Parser::SkipUnnecessaryClosingTags(bool value)
 {
     skipUnnecessaryClosingTags_ = value;
+}
+void Parser::AllowMistypedCommentTags(bool value)
+{
+    allowMistypedCommentTags_ = value;
 }
 
 //Other
@@ -249,7 +262,9 @@ Element Parser::ReadNextTag(std::istream& stream, bool& emptyOut,
         buffer.sputc(stream.get());   //extract '>' into buffer
         activeBuffer = buffer.str();
 
-        if(activeBuffer.substr(0,4) == "<!--")  //Comment tag
+        if(activeBuffer.substr(0,4) == "<!--"           //Comment tag
+           || (activeBuffer.substr(0,5) == "<! --"
+               && allowMistypedCommentTags_))           //Mistyped comment tag
         {
             //Ignore comments for now
             //Just add new line to the text
