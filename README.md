@@ -18,7 +18,7 @@ Clone the repository using command:
 ``` sh
 git clone https://github.com/axontom/idogaf-html-parser.git
 ```
-or download zip from [here](https://github.com/axontom/idogaf-html-parser/archive/v1.1.1.zip) and extract it to your desired location.
+or download zip from [here](https://github.com/axontom/idogaf-html-parser/archive/v1.2.0.zip) and extract it to your desired location.
 
 Navigate to the root folder of the project and install the library using the following commands:
 ``` sh
